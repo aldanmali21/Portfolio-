@@ -1,0 +1,57 @@
+---
+import type { CaseStudy } from "../data/site";
+
+interface Props {
+  study: CaseStudy;
+}
+const { study } = Astro.props;
+const desktop = study.device === "desktop";
+const imgs = study.images;
+const first = imgs[0];
+---
+
+<div class:list={["scene", desktop && "scene-desktop"]}>
+  <div class="laptop" aria-hidden={desktop ? undefined : "true"}>
+    <div class="laptop-screen">
+      <div class="chrome">
+        <i></i><i></i><i></i>
+        <span class="url">{study.urlLabel}</span>
+      </div>
+      {
+        desktop && (
+          <div class="desk-shot">
+            {"src" in first ? (
+              <img src={first.src} alt={first.alt} loading="lazy" decoding="async" />
+            ) : (
+              <div class="desk-placeholder">
+                <strong>{first.placeholder}</strong>
+                <span class="todo">screenshot to add</span>
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div>
+    <div class="laptop-base"></div>
+  </div>
+  {
+    !desktop && (
+      <div class:list={["phones", imgs.length > 1 && "multi"]}>
+        {imgs.map((img) =>
+          "src" in img ? (
+            <figure class="frame">
+              <img src={img.src} alt={img.alt} width="640" loading="lazy" decoding="async" />
+            </figure>
+          ) : (
+            <figure class="frame frame-placeholder" aria-label={`Placeholder: ${img.placeholder}`}>
+              <div>
+                <strong>{img.placeholder}</strong>
+                <span class="todo">screenshot to add</span>
+              </div>
+            </figure>
+          ),
+        )}
+      </div>
+    )
+  }
+</div>

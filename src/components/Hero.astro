@@ -1,25 +1,34 @@
 ---
 import { profile, currently, needs } from "../data/site";
-import Todo from "./Todo.astro";
+import WhatsAppIcon from "./WhatsAppIcon.astro";
+
+const words = profile.headline.split(" ");
 ---
 
-<section id="top" class="wrap pb-14 pt-14 sm:pb-20 sm:pt-24">
-  <p
-    class="mb-6 inline-flex items-center gap-2 rounded-full border border-line px-3 py-1 text-sm text-muted"
-  >
-    <span class="h-2 w-2 rounded-full bg-accent" aria-hidden="true"></span>
-    {profile.availability}
+<section id="top" class="wrap pb-16 pt-12 sm:pb-24 sm:pt-20">
+  <p class="mb-7 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+    <span class="inline-flex items-center gap-2">
+      <span class="h-2 w-2 rounded-full bg-[#25d366]" aria-hidden="true"></span>
+      {profile.availability}
+    </span>
+    <span>
+      {profile.location}<span id="local-time" class="tabular-nums"></span>
+    </span>
   </p>
 
-  <h1 class="display max-w-3xl text-5xl sm:text-7xl">{profile.headline}</h1>
-  <p class="mt-6 max-w-2xl text-lg text-muted sm:text-xl">{profile.subline}</p>
+  <h1 class="display headline max-w-5xl text-[clamp(3.1rem,9.5vw,8.2rem)]">
+    {words.map((w, i) => <><span class="word" style={`--i:${i}`}>{w}</span>{" "}</>)}
+  </h1>
+  <p class="mt-7 max-w-2xl text-lg text-muted sm:text-xl">{profile.subline}</p>
 
-  <div class="mt-8 flex flex-wrap gap-3">
-    <a href={profile.whatsapp} class="btn btn-primary">Message me on WhatsApp</a>
-    <a href={`mailto:${profile.email}`} class="btn btn-ghost">Email me</a>
+  <div class="mt-9 flex flex-wrap items-center gap-3">
+    <a href={profile.whatsapp} class="btn btn-wa" rel="noopener">
+      <WhatsAppIcon />Message me on WhatsApp
+    </a>
+    <a href={`mailto:${profile.email}`} class="btn btn-ghost">{profile.email}</a>
   </div>
 
-  <p class="mt-6 text-sm text-muted">
+  <p class="mt-7 text-sm text-muted">
     {currently.text}{" "}
     {
       currently.link ? (
@@ -27,13 +36,13 @@ import Todo from "./Todo.astro";
           {currently.link.label}
         </a>
       ) : (
-        <Todo note="Afritam link" />
+        <span class="todo">Afritam link to add</span>
       )
     }
   </p>
 
-  <div id="needs" class="mt-12 js-only" hidden>
-    <p class="eyebrow mb-3">What do you need built?</p>
+  <div id="needs" class="mt-14 js-only" hidden>
+    <p class="label mb-3">What do you need built?</p>
     <div class="flex flex-wrap gap-2" role="group" aria-label="What do you need built?">
       {
         needs.map((n) => (
@@ -105,5 +114,17 @@ import Todo from "./Todo.astro";
         result.hidden = false;
       });
     });
+  }
+
+  const clock = document.getElementById("local-time");
+  if (clock) {
+    const fmt = new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Africa/Kampala",
+    });
+    const tick = () => (clock.textContent = ` \u00b7 ${fmt.format(new Date())} local time`);
+    tick();
+    setInterval(tick, 30000);
   }
 </script>

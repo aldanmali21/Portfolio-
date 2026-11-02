@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------- */
+/* Tokens                                                            */
+/* ---------------------------------------------------------------- */
 :root {
   --paper: #faf7f2;
   --paper-2: #f2ede4;
@@ -10,8 +13,9 @@
   --accent-ink: #ffffff;
   --accent-soft: #e3f0ec;
   --bezel: #14130f;
-  --todo: #a35a00;
+  --todo: #8a5000;
   --todo-soft: #fff1d6;
+  --header-h: 3.75rem;
   color-scheme: light;
 }
 
@@ -32,20 +36,19 @@
     color-scheme: dark;
   }
 }
-
 :root[data-theme="dark"] {
-    --paper: #0f1311;
-    --paper-2: #161c19;
-    --ink: #f2efe8;
-    --muted: #a7a398;
-    --line: #27302c;
-    --accent: #4fc9ad;
-    --accent-ink: #06231c;
-    --accent-soft: #12302a;
-    --bezel: #2c3531;
-    --todo: #f0b35a;
-    --todo-soft: #3a2a0c;
-    color-scheme: dark;
+  --paper: #0f1311;
+  --paper-2: #161c19;
+  --ink: #f2efe8;
+  --muted: #a7a398;
+  --line: #27302c;
+  --accent: #4fc9ad;
+  --accent-ink: #06231c;
+  --accent-soft: #12302a;
+  --bezel: #2c3531;
+  --todo: #f0b35a;
+  --todo-soft: #3a2a0c;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -57,23 +60,36 @@
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+/* Registered so the phone-to-laptop morph can animate smoothly. */
+@property --m {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --d {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* Base                                                              */
+/* ---------------------------------------------------------------- */
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
 }
-
 body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
-  line-height: 1.6;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -85,7 +101,6 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
-
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
@@ -94,47 +109,44 @@ body {
 
 .display {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
 }
-
 .wrap {
   width: 100%;
-  max-width: 68rem;
+  max-width: 72rem;
   margin-inline: auto;
-  padding-inline: 1rem;
+  padding-inline: 1.25rem;
 }
 @media (min-width: 640px) {
   .wrap {
-    padding-inline: 1.5rem;
+    padding-inline: 2rem;
   }
 }
-
-.eyebrow {
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
+.label {
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 600;
   color: var(--accent);
 }
 
+/* ---------------------------------------------------------------- */
+/* Buttons                                                           */
+/* ---------------------------------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.25rem;
+  gap: 0.55rem;
+  padding: 0.8rem 1.3rem;
   border-radius: 999px;
   font-weight: 600;
   font-size: 0.95rem;
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease, filter 0.15s ease;
 }
 .btn:hover {
   transform: translateY(-1px);
-}
-.btn-primary {
-  background: var(--accent);
-  color: var(--accent-ink);
 }
 .btn-ghost {
   border: 1px solid var(--line);
@@ -143,244 +155,29 @@ body {
 .btn-ghost:hover {
   background: var(--paper-2);
 }
+/* WhatsApp's own green, kept fixed whatever brand colour is active. */
+.btn-wa {
+  background: #25d366;
+  color: #062b16;
+}
+.btn-wa:hover {
+  filter: brightness(1.06);
+}
+.btn-wa svg {
+  flex: none;
+}
 
 /* Visible marker for content that has not been supplied yet. */
 .todo {
   display: inline-block;
-  padding: 0.05rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.72rem;
+  padding: 0 0.45rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   background: var(--todo-soft);
   color: var(--todo);
   border: 1px dashed var(--todo);
-}
-
-/* Phone-style frame for screenshots and placeholders. */
-.frame {
-  width: 100%;
-  max-width: 17rem;
-  margin-inline: auto;
-  border: 7px solid var(--bezel);
-  border-radius: 2.1rem;
-  overflow: hidden;
-  background: var(--paper-2);
-  box-shadow: 0 24px 50px -24px rgb(0 0 0 / 0.45);
-}
-.frame img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.frame-placeholder {
-  aspect-ratio: 9 / 17;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  padding: 1rem;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      transparent 0 14px,
-      color-mix(in srgb, var(--accent) 7%, transparent) 14px 28px
-    ),
-    var(--paper-2);
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-/* Need chips: progressive enhancement, hidden until the script runs. */
-.js-only[hidden] {
-  display: none;
-}
-.chip {
-  border: 1px solid var(--line);
-  background: var(--paper);
-  color: var(--ink);
-  padding: 0.55rem 0.95rem;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-.chip:hover {
-  border-color: var(--accent);
-}
-.chip[aria-pressed="true"] {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
-}
-
-
-/* ------------------------------------------------------------------ */
-/* Brand themes: each project section borrows its own project's brand. */
-/* Setting --accent* re-tints every accent-coloured element inside.    */
-/* light-dark() picks the right value for the current theme.           */
-/* ------------------------------------------------------------------ */
-[data-brand] {
-  --accent: var(--b);
-  --accent-ink: var(--b-ink);
-  --accent-soft: var(--b-soft);
-}
-
-/* Farmarq: terracotta */
-[data-brand="farmarq"] {
-  --b: light-dark(#8f3d22, #e58b63);
-  --b-ink: light-dark(#ffffff, #2a0f05);
-  --b-soft: light-dark(#efd3c2, #3a2218);
-  --b-bg: light-dark(#f8ebe1, #231510);
-}
-/* Kampala Dermatology: plum */
-[data-brand="kampala-dermatology"] {
-  --b: light-dark(#5b2a6b, #c79bdb);
-  --b-ink: light-dark(#ffffff, #210a2b);
-  --b-soft: light-dark(#e6d6ec, #2e1c38);
-  --b-bg: light-dark(#f5eef8, #1c1222);
-}
-/* Real Estate AI Assistant: crimson (placeholder until a brand colour is chosen) */
-[data-brand="real-estate-ai"] {
-  --b: light-dark(#b0344f, #f08aa0);
-  --b-ink: light-dark(#ffffff, #33060f);
-  --b-soft: light-dark(#f6d5dc, #3a1721);
-  --b-bg: light-dark(#fcf0f2, #22121a);
-}
-/* Akalimo: violet */
-[data-brand="akalimo"] {
-  --b: light-dark(#6d3bd2, #b79cf5);
-  --b-ink: light-dark(#ffffff, #1a0b3d);
-  --b-soft: light-dark(#e0d5f8, #2a1f45);
-  --b-bg: light-dark(#f3effd, #181226);
-}
-/* BMK Farm Management System: blue */
-[data-brand="bmk"] {
-  --b: light-dark(#1f5fbf, #7aa9f0);
-  --b-ink: light-dark(#ffffff, #071a38);
-  --b-soft: light-dark(#d3e2f7, #17263d);
-  --b-bg: light-dark(#ebf2fc, #0f1826);
-}
-/* Pearlworth Foundation School: green */
-[data-brand="pearlworth"] {
-  --b: light-dark(#2e7d32, #7cc97f);
-  --b-ink: light-dark(#ffffff, #08200a);
-  --b-soft: light-dark(#d4e8d2, #182a19);
-  --b-bg: light-dark(#ecf6eb, #0f1a10);
-}
-
-/* Full-bleed band for each case study. */
-.case {
-  position: relative;
-  isolation: isolate;
-  overflow-x: clip;
-  background: var(--b-bg);
-  border-top: 1px solid var(--accent-soft);
-}
-.case.is-match .wrap {
-  outline: 2px solid var(--accent);
-  outline-offset: -4px;
-  border-radius: 1.5rem;
-}
-.brand-dot {
-  display: inline-block;
-  width: 0.7rem;
-  height: 0.7rem;
-  margin-right: 0.5rem;
-  border-radius: 999px;
-  background: var(--accent);
-  vertical-align: baseline;
-}
-.case .frame {
-  box-shadow: 0 28px 55px -22px color-mix(in srgb, var(--accent) 60%, transparent);
-}
-
-/* A different backdrop motif behind each project's screenshots. */
-.media {
-  position: relative;
-}
-.media::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-}
-/* Farmarq: growth rings */
-[data-brand="farmarq"] .media::before {
-  inset: -3rem;
-  background: repeating-radial-gradient(
-    circle at center,
-    transparent 0 20px,
-    color-mix(in srgb, var(--accent) 26%, transparent) 20px 21px
-  );
-  mask-image: radial-gradient(circle, #000 25%, transparent 70%);
-}
-/* Kampala Dermatology: a soft arch, like a clinic window */
-[data-brand="kampala-dermatology"] .media::before {
-  inset: -1.5rem 12% -1.5rem;
-  border-radius: 999px 999px 1.5rem 1.5rem;
-  background: var(--accent-soft);
-}
-/* Real Estate AI: blueprint grid */
-[data-brand="real-estate-ai"] .media::before {
-  inset: -2rem;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--accent) 24%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 24%, transparent) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse, #000 35%, transparent 72%);
-}
-/* Akalimo: map-style dot grid */
-[data-brand="akalimo"] .media::before {
-  inset: -2rem;
-  background-image: radial-gradient(
-    color-mix(in srgb, var(--accent) 50%, transparent) 1.6px,
-    transparent 1.7px
-  );
-  background-size: 20px 20px;
-  mask-image: radial-gradient(ellipse, #000 35%, transparent 75%);
-}
-
-/* Compact "Also built" cards carry their brand too. */
-.card {
-  position: relative;
-  overflow: hidden;
-  background: var(--b-bg);
-  border: 1px solid var(--accent-soft);
-  border-top: 5px solid var(--accent);
-}
-.card.is-match {
-  outline: 2px solid var(--accent);
-  outline-offset: 4px;
-}
-.card {
-  isolation: isolate;
-}
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  mask-image: linear-gradient(to bottom, transparent 35%, #000);
-}
-/* BMK: ledger lines, like a farm record book */
-[data-brand="bmk"].card::before {
-  background-image: repeating-linear-gradient(
-    transparent 0 27px,
-    color-mix(in srgb, var(--accent) 22%, transparent) 27px 28px
-  );
-}
-/* Pearlworth: exercise-book squares */
-[data-brand="pearlworth"].card::before {
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--accent) 20%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 20%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-.card .btn,
-.card a {
-  color: var(--accent);
 }
 
 /* Light/dark toggle in the header. */
@@ -415,28 +212,501 @@ body {
   }
 }
 
-/* Keep placeholder labels inside narrow frames (three across on phones). */
-.frame-placeholder {
-  padding: 0.4rem;
+/* ---------------------------------------------------------------- */
+/* Hero                                                              */
+/* ---------------------------------------------------------------- */
+.headline .word {
+  display: inline-block;
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i) * 70ms + 80ms);
+}
+.headline .word:last-child {
+  color: var(--accent);
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.chip {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.chip:hover {
+  border-color: var(--accent);
+}
+.chip[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* ---------------------------------------------------------------- */
+/* Brand themes: each project borrows its own project's brand.      */
+/* Setting --accent* re-tints every accent-coloured element inside. */
+/* ---------------------------------------------------------------- */
+[data-brand] {
+  --accent: var(--b);
+  --accent-ink: var(--b-ink);
+  --accent-soft: var(--b-soft);
+}
+[data-brand="farmarq"] {
+  --b: light-dark(#8f3d22, #e58b63);
+  --b-ink: light-dark(#ffffff, #2a0f05);
+  --b-soft: light-dark(#efd3c2, #3a2218);
+  --b-bg: light-dark(#f8ebe1, #231510);
+}
+[data-brand="kampala-dermatology"] {
+  --b: light-dark(#5b2a6b, #c79bdb);
+  --b-ink: light-dark(#ffffff, #210a2b);
+  --b-soft: light-dark(#e6d6ec, #2e1c38);
+  --b-bg: light-dark(#f5eef8, #1c1222);
+}
+/* Crimson is a placeholder until the real brand colour is chosen. */
+[data-brand="real-estate-ai"] {
+  --b: light-dark(#b0344f, #f08aa0);
+  --b-ink: light-dark(#ffffff, #33060f);
+  --b-soft: light-dark(#f6d5dc, #3a1721);
+  --b-bg: light-dark(#fcf0f2, #22121a);
+}
+[data-brand="akalimo"] {
+  --b: light-dark(#6d3bd2, #b79cf5);
+  --b-ink: light-dark(#ffffff, #1a0b3d);
+  --b-soft: light-dark(#e0d5f8, #2a1f45);
+  --b-bg: light-dark(#f3effd, #181226);
+}
+[data-brand="bmk"] {
+  --b: light-dark(#1f5fbf, #7aa9f0);
+  --b-ink: light-dark(#ffffff, #071a38);
+  --b-soft: light-dark(#d3e2f7, #17263d);
+  --b-bg: light-dark(#ebf2fc, #0f1826);
+}
+[data-brand="pearlworth"] {
+  --b: light-dark(#2e7d32, #7cc97f);
+  --b-ink: light-dark(#ffffff, #08200a);
+  --b-soft: light-dark(#d4e8d2, #182a19);
+  --b-bg: light-dark(#ecf6eb, #0f1a10);
+}
+
+/* ---------------------------------------------------------------- */
+/* Work: pinned, sideways-scrolling projects                         */
+/* ---------------------------------------------------------------- */
+.work {
+  position: relative;
+  border-top: 1px solid var(--line);
+}
+.stage {
+  position: relative;
+}
+.track {
+  display: block;
+}
+
+/* Pinned mode (set by script on large screens without reduced motion). */
+.work.is-h {
+  height: calc(100svh + (var(--n) - 1) * 90svh);
+}
+.work.is-h .stage {
+  position: sticky;
+  top: var(--header-h);
+  height: calc(100svh - var(--header-h));
+  overflow: hidden;
+}
+.work.is-h .track {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+}
+.work.is-h .panel {
+  flex: 0 0 100%;
+  height: 100%;
+  padding-block: 0 4.5rem;
+}
+
+.panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: var(--b-bg);
+  padding-block: 4rem;
+  --m: 0;
+  --d: 0;
+}
+/* Stacked mode: the phone-to-laptop morph plays as the panel scrolls into view. */
+.work:not(.is-h) .panel {
+  transition: --m 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.panel + .panel {
+  border-left: 1px solid var(--accent-soft);
+}
+.panel-grid {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 900px) {
+  .panel-grid {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 3rem;
+    padding-inline: 2rem;
+  }
+}
+.panel-num {
+  position: absolute;
+  z-index: -1;
+  right: 1.5rem;
+  top: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(6rem, 17vw, 15rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--accent) 30%, transparent);
+  pointer-events: none;
+  translate: calc(var(--d) * 6rem) 0;
+}
+.copy {
+  translate: calc(var(--d) * 2.5rem) 0;
+}
+.copy h3 {
+  font-size: clamp(2.2rem, 4.6vw, 4.2rem);
+}
+.copy .summary {
+  margin-top: 1.1rem;
+  font-size: clamp(1rem, 1.35vw, 1.15rem);
+  color: var(--muted);
+  max-width: 34rem;
+}
+.points {
+  margin-top: 1.1rem;
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.97rem;
+  max-width: 34rem;
+}
+.points li {
+  position: relative;
+  padding-left: 1.4rem;
+}
+.points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.8rem;
+  height: 2px;
+  background: var(--accent);
+}
+.facts {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem 2rem;
+  font-size: 0.88rem;
+}
+.facts dt {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.facts dd {
+  margin-top: 0.1rem;
+  font-weight: 500;
+}
+.status {
+  display: inline-block;
+  margin-left: 0.6rem;
+  padding: 0.05rem 0.55rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.match-tag {
+  display: none;
+  margin-bottom: 0.9rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
   font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.panel.is-match .match-tag {
+  display: inline-block;
+}
+.visit {
+  margin-top: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 0.1rem;
+}
+
+/* Progress rail (pinned mode only). */
+.rail {
+  display: none;
+}
+.work.is-h .rail {
+  display: flex;
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.85rem 2rem 1.1rem;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--paper) 70%, transparent));
+}
+.rail-count {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  min-width: 11rem;
+  color: var(--accent);
+}
+.rail-ticks {
+  display: flex;
+  flex: 1;
+  gap: 0.4rem;
+}
+.rail-ticks button {
+  flex: 1;
+  height: 1.6rem;
+  display: grid;
+  align-items: end;
+  cursor: pointer;
+}
+.rail-ticks button i {
+  display: block;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--line);
+  transition: background-color 0.2s ease, height 0.2s ease;
+}
+.rail-ticks button[aria-current="true"] i {
+  height: 5px;
+  background: var(--accent);
+}
+.rail-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- */
+/* Scene: a phone that becomes a laptop                              */
+/* ---------------------------------------------------------------- */
+.scene {
+  position: relative;
+  width: 100%;
+  max-width: 40rem;
+  max-height: calc(100svh - var(--header-h) - 8rem);
+  aspect-ratio: 16 / 11;
+  margin-inline: auto;
+  translate: calc(var(--d) * -4.5rem) 0;
+}
+.laptop {
+  position: absolute;
+  inset: 0 3% 9% 3%;
+  opacity: var(--m);
+  transform: scale(calc(0.78 + 0.22 * var(--m)));
+  transform-origin: 50% 70%;
+}
+.scene-desktop .laptop {
+  opacity: 1;
+  transform: none;
+}
+.laptop-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  border: 9px solid var(--bezel);
+  border-bottom-width: 12px;
+  border-radius: 0.9rem 0.9rem 0.3rem 0.3rem;
+  background:
+    radial-gradient(90% 70% at 15% 0%, rgb(255 255 255 / 0.18), transparent 60%),
+    color-mix(in srgb, var(--accent) 82%, #000);
+  overflow: hidden;
+  box-shadow: 0 30px 60px -28px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.laptop-base {
+  position: absolute;
+  left: -5%;
+  right: -5%;
+  bottom: -7%;
+  height: 7%;
+  border-radius: 0 0 1.1rem 1.1rem;
+  background: linear-gradient(color-mix(in srgb, var(--bezel) 55%, #ccc), color-mix(in srgb, var(--bezel) 80%, #888));
+}
+.laptop-base::after {
+  content: "";
+  position: absolute;
+  left: 42%;
+  right: 42%;
+  top: 0;
+  height: 40%;
+  border-radius: 0 0 0.5rem 0.5rem;
+  background: rgb(0 0 0 / 0.25);
+}
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.7rem;
+  background: rgb(0 0 0 / 0.28);
+  flex: none;
+}
+.chrome i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.55);
+}
+.chrome .url {
+  margin-left: 0.6rem;
+  padding: 0.08rem 0.7rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.3);
+  color: #fff;
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+}
+.desk-shot {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: var(--paper-2);
+}
+.desk-shot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.desk-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 0.5rem;
+  justify-items: center;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 14px,
+    color-mix(in srgb, var(--accent) 8%, transparent) 14px 28px
+  );
+}
+.desk-placeholder strong {
+  color: var(--ink);
+}
+
+.phones {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 36%;
+  display: grid;
+  gap: 0.6rem;
+  transform: translate(-50%, calc(-50% - 3% * var(--m))) scale(calc(1 - 0.4 * var(--m)));
+}
+.phones.multi {
+  width: 62%;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Phone-style frame for screenshots and placeholders. */
+.frame {
+  width: 100%;
+  border: 7px solid var(--bezel);
+  border-radius: 2.1rem;
+  overflow: hidden;
+  background: var(--paper-2);
+  box-shadow: 0 24px 50px -22px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.frame-placeholder {
+  aspect-ratio: 9 / 17;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 14px,
+    color-mix(in srgb, var(--accent) 9%, transparent) 14px 28px
+  );
+}
+.frame-placeholder strong {
+  display: block;
+  color: var(--ink);
+  margin-bottom: 0.35rem;
 }
 .frame-placeholder .todo {
-  display: block;
   white-space: normal;
-  font-size: 0.6rem;
-  letter-spacing: 0.02em;
-  padding: 0.1rem 0.3rem;
-  border-radius: 0.5rem;
+  font-size: 0.58rem;
 }
-@media (min-width: 640px) {
-  .frame-placeholder {
-    padding: 1rem;
-    font-size: 0.85rem;
-  }
-  .frame-placeholder .todo {
-    display: inline-block;
-    font-size: 0.72rem;
-    padding: 0.05rem 0.5rem;
-    border-radius: 999px;
-  }
+
+/* ---------------------------------------------------------------- */
+/* Contact and footer                                                */
+/* ---------------------------------------------------------------- */
+.stack-list dt {
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.stack-list dd {
+  margin: 0.1rem 0 1rem;
+}
+
+.work.is-h .work-intro {
+  display: none;
+}
+.rail-count {
+  white-space: pre;
+  min-width: 17rem;
+}
+
+/* Three phones side by side keep more of their size inside the laptop. */
+.phones.multi {
+  width: 66%;
+  transform: translate(-50%, calc(-50% - 2% * var(--m))) scale(calc(1 - 0.16 * var(--m)));
 }

@@ -1,5 +1,5 @@
 // All page content lives here. A value of `null` means "not provided yet" and
-// renders as a visible TODO marker. Never fill these with guesses.
+// renders as a visible marker. Never fill these with guesses.
 
 export type Maybe<T> = T | null;
 
@@ -17,24 +17,19 @@ export interface CaseStudy {
   points: string[];
   facts: Fact[];
   link: Maybe<{ href: string; label: string }>;
-  /** Screenshot files in /public/images, or placeholder labels when not yet supplied. */
+  /** Text shown in the little address bar of the laptop mockup. */
+  urlLabel: string;
+  /** "phone": mobile screenshots morph into a laptop scene. "desktop": a desktop screenshot fills the laptop. */
+  device: "phone" | "desktop";
+  /** Real screenshots in /public/images, or placeholder labels when not yet supplied. */
   images: { src: string; alt: string }[] | { placeholder: string }[];
-}
-
-export interface AlsoBuilt {
-  id: string;
-  title: string;
-  status: Maybe<string>;
-  summary: string;
-  facts: Fact[];
-  link: Maybe<{ href: string; label: string }>;
 }
 
 export interface NeedChip {
   id: string;
   label: string;
   pitch: string;
-  /** ids of the case studies (or also-built cards) this need points to. */
+  /** ids of the projects this need points to. The first one sets the hero's brand colour. */
   targets: string[];
 }
 
@@ -53,11 +48,10 @@ export const profile = {
   github: "https://github.com/aldanmali21",
 };
 
-/** Afritam: shown as a "Currently" strip near the top. */
+/** Afritam: shown as a "Currently" line in the hero. */
 export const currently = {
-  text: "Currently building Afritam, a software consultancy.",
+  text: "Right now I'm building Afritam, a software consultancy.",
   link: null as Maybe<{ href: string; label: string }>, // TODO: Afritam URL
-  description: null as Maybe<string>, // TODO: one-line description of what Afritam does
 };
 
 export const needs: NeedChip[] = [
@@ -93,33 +87,32 @@ export const needs: NeedChip[] = [
     id: "portal",
     label: "Launch a portal or school site",
     pitch:
-      "A responsive school website where teachers upload and share resources.",
+      "A school website where teachers upload and share resources.",
     targets: ["pearlworth"],
   },
 ];
 
-export const caseStudies: CaseStudy[] = [
+export const projects: CaseStudy[] = [
   {
     id: "farmarq",
     kicker: "Livestock records",
     title: "Farmarq",
     status: null,
     summary:
-      "Livestock records for Uganda and beyond. A workspace for each species, built around what the farmer does: cattle and goat records, the work that is due and the money, in one place.",
+      "Record-keeping for livestock farmers in Uganda. Each species gets its own workspace for records, work that is due, and money.",
     points: [
       "Works offline on the farm, on Android, iPhone and computer.",
-      "Choose your activities and the workspace shapes itself around them.",
       "Free during beta.",
     ],
     facts: [
-      { label: "My role", value: null }, // TODO
+      { label: "Role", value: null }, // TODO
       { label: "Stack", value: null }, // TODO
-      { label: "Outcome", value: null }, // TODO
+      { label: "Result", value: null }, // TODO
     ],
-    link: { href: "https://farmarq.com", label: "Visit farmarq.com" },
-    images: [
-      { src: "/images/farmarq.webp", alt: "Farmarq home page on a phone" },
-    ],
+    link: { href: "https://farmarq.com", label: "farmarq.com" },
+    urlLabel: "farmarq.com",
+    device: "phone",
+    images: [{ src: "/images/farmarq.webp", alt: "Farmarq home page on a phone" }],
   },
   {
     id: "kampala-dermatology",
@@ -127,21 +120,19 @@ export const caseStudies: CaseStudy[] = [
     title: "Kampala Dermatology",
     status: null,
     summary:
-      "The website for a dermatologist-led clinic treating skin, hair and nails. It is built around one action: book a consultation.",
+      "The website for a dermatologist-led clinic that treats skin, hair and nails.",
     points: [
-      "A clear “Book a Consultation” button and a booking tab that follows the visitor.",
-      "WhatsApp chat one tap away, the way patients already reach clinics.",
-      "A plain-language opening line: a dermatologist-led clinic for skin, hair and nails.",
+      "One main action: book a consultation. The button is in the hero and a booking tab sits on the screen edge.",
+      "WhatsApp chat is a tap away.",
     ],
     facts: [
-      { label: "My role", value: null }, // TODO
+      { label: "Role", value: null }, // TODO
       { label: "Stack", value: null }, // TODO
-      { label: "Outcome", value: null }, // TODO
+      { label: "Result", value: null }, // TODO
     ],
-    link: {
-      href: "https://kampaladermatology.com",
-      label: "Visit kampaladermatology.com",
-    },
+    link: { href: "https://kampaladermatology.com", label: "kampaladermatology.com" },
+    urlLabel: "kampaladermatology.com",
+    device: "phone",
     images: [
       {
         src: "/images/kampala-dermatology.webp",
@@ -155,19 +146,20 @@ export const caseStudies: CaseStudy[] = [
     title: "Real Estate AI Assistant",
     status: "In progress",
     summary:
-      "A Telegram bot that handles the first conversation with a property client, so the agent only steps in when there is a real viewing to confirm.",
+      "A Telegram bot that talks to property clients first, so the agent only steps in when there is a viewing to confirm.",
     points: [
-      "Understands what the client wants, whether to rent or buy, and how many bedrooms and what budget.",
-      "Follows the client when their needs change mid-conversation.",
-      "Matches a listing and books the viewing, which the agent confirms.",
-      "Says so when a detail is not in the listing, instead of inventing an answer.",
+      "Asks what the client wants (rent or buy, bedrooms, budget) and keeps up when they change their mind.",
+      "Matches a listing and books the viewing for the agent to confirm.",
+      "Says when a detail is not in the listing instead of guessing.",
     ],
     facts: [
-      { label: "Reached through", value: "A Telegram bot" },
+      { label: "Channel", value: "Telegram bot" },
       { label: "Stack", value: null }, // TODO: AI model and back end
-      { label: "Outcome", value: null }, // TODO
+      { label: "Result", value: null }, // TODO
     ],
     link: null,
+    urlLabel: "Telegram bot: Ctrap",
+    device: "phone",
     images: [
       {
         src: "/images/real-estate-ai.webp",
@@ -177,81 +169,76 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     id: "akalimo",
-    kicker: "Marketplace platform",
+    kicker: "Marketplace",
     title: "Akalimo",
     status: null,
     summary:
-      "A service marketplace that connects clients with skilled tradespeople, suppliers and training workshops. Post a job, compare quotes, pay through escrow and watch the work arrive.",
+      "A marketplace that connects clients with tradespeople. A client posts a job, tradespeople send quotes, and payment sits in escrow until the work is approved.",
     points: [
-      "Clients post a job, tradespeople quote, and payment is held in escrow until the work is approved.",
-      "Live map tracking shows the tradesperson on the way.",
-      "Identity verification for the people who earn on the platform.",
-      "An apprenticeship programme with supervisors, reports and grading.",
-      "Urgent updates over WhatsApp, records by email.",
+      "Live map tracking of the tradesperson on the way.",
+      "Identity checks for people who get paid through the platform.",
+      "An apprenticeship programme with supervisors and graded reports.",
+      "Urgent updates go to WhatsApp, records to email.",
     ],
     facts: [
-      {
-        label: "Stack",
-        value: "React, TypeScript, Tailwind, Supabase, Mapbox",
-      },
-      { label: "Access", value: "Private. Screenshots only." },
-      { label: "Outcome", value: null }, // TODO
+      { label: "Stack", value: "React, TypeScript, Supabase, Mapbox" },
+      { label: "Access", value: "Private, screenshots only" },
+      { label: "Result", value: null }, // TODO
     ],
     link: null,
+    urlLabel: "private project",
+    device: "phone",
     images: [
       { placeholder: "Post a job" },
       { placeholder: "Compare quotes" },
       { placeholder: "Live tracking" },
     ],
   },
-];
-
-export const alsoBuilt: AlsoBuilt[] = [
   {
     id: "bmk",
+    kicker: "Farm management",
     title: "BMK Farm Management System",
     status: "Ongoing",
     summary:
-      "A farm management system built for Bart Magunda Katureebe, former Chief Justice of Uganda. It tracks animal health, history and productivity, with tiered access for administrators, managers and veterinarians.",
+      "A farm management system for Bart Magunda Katureebe, former Chief Justice of Uganda.",
+    points: [
+      "Tracks animal health, history and productivity.",
+      "Separate access for administrators, managers and veterinarians.",
+      "Works on a phone for staff out in the field.",
+    ],
     facts: [
       { label: "Stack", value: "PHP, MySQL" },
-      { label: "Outcome", value: null }, // TODO
+      { label: "Client", value: "Bart Magunda Katureebe" },
+      { label: "Result", value: null }, // TODO
     ],
     link: null,
+    urlLabel: "private client system",
+    device: "desktop",
+    images: [{ placeholder: "Dashboard screenshot" }],
   },
   {
     id: "pearlworth",
+    kicker: "School website",
     title: "Pearlworth Foundation School",
     status: null,
-    summary:
-      "The school's website, with teacher uploads and resource sharing. Built responsive so it works on any device, and kept updated after launch.",
+    summary: "The website for Pearlworth Foundation School.",
+    points: [
+      "Teachers upload resources and share them with each other.",
+      "Works on any device.",
+      "Kept up with regular updates for performance and security.",
+    ],
     facts: [
       { label: "Stack", value: "HTML, CSS, JavaScript, PHP" },
-      { label: "Outcome", value: null }, // TODO
+      { label: "Role", value: "Lead developer" },
+      { label: "Result", value: null }, // TODO
     ],
     link: {
       href: "https://pearlworthfoundationschool.com",
-      label: "Visit the site",
+      label: "pearlworthfoundationschool.com",
     },
-  },
-];
-
-export const process = [
-  {
-    title: "Listen",
-    body: "We start with the problem and the people who will use the system.",
-  },
-  {
-    title: "Scope",
-    body: "A small first version, agreed in plain language before any code.",
-  },
-  {
-    title: "Build",
-    body: "Secure by default, with the right access for the right people.",
-  },
-  {
-    title: "Support",
-    body: "Updates, fixes and maintenance after launch.",
+    urlLabel: "pearlworthfoundationschool.com",
+    device: "desktop",
+    images: [{ placeholder: "Website screenshot" }],
   },
 ];
 
@@ -264,26 +251,14 @@ export const experience = [
   {
     title: "IT Support and Networking Intern",
     place: "Uganda Virus Research Institute",
-    when: "Jun to Aug 2025",
+    when: "June to August 2025",
   },
 ];
 
-export const skills = [
-  "AI workflow automation",
-  "JavaScript",
-  "TypeScript",
-  "React",
-  "React Native",
-  "Node.js",
-  "PHP",
-  "PostgreSQL",
-  "MySQL",
-  "MongoDB",
-  "Supabase",
-  "Firebase",
-  "Docker",
-  "CI/CD",
-  "Kubernetes",
-  "DigitalOcean",
-  "Git",
+export const stack = [
+  { label: "Languages", items: "JavaScript, TypeScript, PHP" },
+  { label: "Front end", items: "React, React Native, Tailwind" },
+  { label: "Back end and data", items: "Node.js, Supabase, Firebase, PostgreSQL, MySQL, MongoDB" },
+  { label: "Shipping", items: "Git, Docker, CI/CD, Kubernetes, DigitalOcean" },
+  { label: "Automation", items: "AI workflow automation" },
 ];

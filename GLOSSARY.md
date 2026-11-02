@@ -9,7 +9,7 @@ A freelancer's or agency's prospective customer: the person or organization who 
 _Avoid_: Recruiter, employer, visitor, hiring manager
 
 **Case study**:
-A featured piece of past work, presented as the problem, what was built, and the outcome.
+A featured piece of past work, shown as its own full-width panel with a summary, key points, facts and screenshots.
 _Avoid_: Project card, work sample, gallery item
 
 **Signature interaction**:
@@ -20,14 +20,14 @@ _Avoid_: Animation, effect, gimmick
 A hero option phrased as a problem a client has, which reveals the matching case study.
 _Avoid_: Industry filter, category tag
 
-**Also built**:
-The compact row for lighter projects that do not get a full case study.
-_Avoid_: Other projects, archive
-
-**Currently strip**:
-The short line near the top naming the work in progress right now.
+**Currently line**:
+The short line in the hero naming the work in progress right now.
 _Avoid_: Banner, status bar
 
 **Brand theme**:
 The colours and backdrop motif a project's section takes from that project's own brand.
 _Avoid_: Skin, template, style
+
+**Device scene**:
+The mockup that frames a case study's screenshots: a phone that morphs into a laptop, or a laptop alone for desktop work.
+_Avoid_: Mockup, frame, preview

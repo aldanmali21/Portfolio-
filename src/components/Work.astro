@@ -1,0 +1,189 @@
+---
+import { projects } from "../data/site";
+import Scene from "./Scene.astro";
+
+const n = projects.length;
+const pad = (i: number) => String(i + 1).padStart(2, "0");
+---
+
+<section id="work" class="work" data-work style={`--n:${n}`} aria-label="Selected work">
+  <div class="work-intro wrap pt-14 pb-2">
+    <p class="label">Selected work</p>
+  </div>
+  <div class="stage">
+    <div class="track">
+      {
+        projects.map((p, i) => (
+          <article id={p.id} class="panel" data-brand={p.id} data-title={p.title} aria-label={p.title}>
+            <span class="panel-num" aria-hidden="true">{pad(i)}</span>
+            <div class="panel-grid">
+              <div class="copy">
+                <span class="match-tag">Matches what you picked</span>
+                <p class="label">{p.kicker}</p>
+                <h3 class="display mt-2">
+                  {p.title}
+                  {p.status && <span class="status">{p.status}</span>}
+                </h3>
+                <p class="summary">{p.summary}</p>
+                <ul class="points">
+                  {p.points.map((pt) => <li>{pt}</li>)}
+                </ul>
+                <dl class="facts">
+                  {
+                    p.facts.map((f) => (
+                      <div>
+                        <dt>{f.label}</dt>
+                        <dd>{f.value ?? <span class="todo">to add</span>}</dd>
+                      </div>
+                    ))
+                  }
+                </dl>
+                {
+                  p.link && (
+                    <a class="visit" href={p.link.href} target="_blank" rel="noopener">
+                      Visit {p.link.label} <span aria-hidden="true">&#8599;</span>
+                    </a>
+                  )
+                }
+              </div>
+              <Scene study={p} />
+            </div>
+          </article>
+        ))
+      }
+    </div>
+    <div class="rail" data-rail>
+      <span class="rail-count" data-rail-count>Selected work</span>
+      <div class="rail-ticks">
+        {
+          projects.map((p, i) => (
+            <button type="button" data-go={i} aria-label={`Go to ${p.title}`} aria-current={i === 0 ? "true" : "false"}>
+              <i></i>
+            </button>
+          ))
+        }
+      </div>
+      <span class="rail-hint">Keep scrolling</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  const work = document.querySelector<HTMLElement>("[data-work]");
+  if (work) {
+    const stage = work.querySelector<HTMLElement>(".stage")!;
+    const track = work.querySelector<HTMLElement>(".track")!;
+    const rail = work.querySelector<HTMLElement>("[data-rail]")!;
+    const count = work.querySelector<HTMLElement>("[data-rail-count]")!;
+    const panels = Array.from(work.querySelectorAll<HTMLElement>(".panel"));
+    const ticks = Array.from(work.querySelectorAll<HTMLButtonElement>("[data-go]"));
+    const header = document.querySelector("header");
+    const mq = window.matchMedia(
+      "(min-width: 900px) and (min-height: 540px) and (prefers-reduced-motion: no-preference)",
+    );
+
+    const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+    const smooth = (t: number) => t * t * (3 - 2 * t);
+    const pad = (i: number) => String(i + 1).padStart(2, "0");
+    const headerH = () => (header ? header.getBoundingClientRect().height : 60);
+    const span = () => work.offsetHeight - stage.offsetHeight;
+
+    let pinned = false;
+    let raf = 0;
+    let active = -1;
+
+    function render() {
+      raf = 0;
+      const hh = headerH();
+      const rect = work!.getBoundingClientRect();
+      const p = clamp((hh - rect.top) / span(), 0, 1);
+      const vw = stage.clientWidth;
+      const maxX = track.scrollWidth - vw;
+      track.style.transform = `translate3d(${-p * maxX}px,0,0)`;
+      // The first project morphs as the section scrolls into view; the rest as they slide in.
+      const entry = smooth(clamp(1 - (rect.top - hh) / (innerHeight * 0.6), 0, 1));
+      panels.forEach((el, i) => {
+        const d = (i * vw - p * maxX) / vw; // 0 when centred, +1 one screen to the right
+        const mh = d <= 0 ? 1 : 1 - smooth(clamp(d / 0.85, 0, 1));
+        el.style.setProperty("--m", String(Math.min(mh, entry)));
+        el.style.setProperty("--d", String(clamp(d, -1, 1)));
+      });
+      const idx = Math.round(p * (panels.length - 1));
+      if (idx !== active) {
+        active = idx;
+        ticks.forEach((t, i) => t.setAttribute("aria-current", String(i === idx)));
+        count.textContent = `${pad(idx)} / ${pad(panels.length - 1)}  ${panels[idx].dataset.title}`;
+        rail.setAttribute("data-brand", panels[idx].id);
+      }
+    }
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(render);
+    };
+
+    // Stacked layout: play the phone-to-laptop morph as each panel scrolls into view.
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          const el = e.target as HTMLElement;
+          if (e.intersectionRatio >= 0.5) el.style.setProperty("--m", "1");
+          else if (e.intersectionRatio < 0.15) el.style.setProperty("--m", "0");
+        });
+      },
+      { threshold: [0, 0.15, 0.5] },
+    );
+
+    function enablePinned() {
+      pinned = true;
+      io.disconnect();
+      work!.classList.add("is-h");
+      window.addEventListener("scroll", schedule, { passive: true });
+      window.addEventListener("resize", schedule);
+      active = -1;
+      render();
+    }
+    function disablePinned() {
+      pinned = false;
+      work!.classList.remove("is-h");
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      track.style.transform = "";
+      panels.forEach((el) => {
+        el.style.setProperty("--m", "0");
+        el.style.setProperty("--d", "0");
+        io.observe(el);
+      });
+    }
+    const apply = () => (mq.matches ? enablePinned() : disablePinned());
+    apply();
+    mq.addEventListener("change", apply);
+
+    function goTo(i: number, behavior: ScrollBehavior = "smooth") {
+      if (pinned) {
+        const absTop = window.scrollY + work!.getBoundingClientRect().top;
+        const target = absTop - headerH() + (i / (panels.length - 1)) * span();
+        window.scrollTo({ top: target, behavior });
+      } else {
+        panels[i].scrollIntoView({ behavior, block: "start" });
+      }
+    }
+
+    ticks.forEach((t) => t.addEventListener("click", () => goTo(Number(t.dataset.go))));
+
+    // Links to a project (including the hero's "See ..." links) scroll to its slide.
+    document.addEventListener("click", (e) => {
+      const a = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+      if (!a) return;
+      const i = panels.findIndex((p) => p.id === a.getAttribute("href")!.slice(1));
+      if (i < 0) return;
+      e.preventDefault();
+      goTo(i);
+    });
+
+    // Tabbing into an off-screen slide brings it into view.
+    panels.forEach((el, i) =>
+      el.addEventListener("focusin", () => {
+        if (pinned && i !== active) goTo(i, "auto");
+      }),
+    );
+  }
+</script>
