@@ -21,7 +21,7 @@ const first = imgs[0];
         desktop && (
           <div class="desk-shot">
             {"src" in first ? (
-              <img src={first.src} alt={first.alt} loading="lazy" decoding="async" />
+              <img src={first.src} alt={first.alt} loading="eager" decoding="async" />
             ) : (
               <div class="desk-placeholder">
                 <strong>{first.placeholder}</strong>
@@ -40,7 +40,7 @@ const first = imgs[0];
         {imgs.map((img) =>
           "src" in img ? (
             <figure class="frame">
-              <img src={img.src} alt={img.alt} width="640" loading="lazy" decoding="async" />
+              <img src={img.src} alt={img.alt} width="640" loading="eager" decoding="async" />
             </figure>
           ) : (
             <figure class="frame frame-placeholder" aria-label={`Placeholder: ${img.placeholder}`}>

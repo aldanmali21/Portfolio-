@@ -332,7 +332,7 @@ body {
 .work.is-h .panel {
   flex: 0 0 100%;
   height: 100%;
-  padding-block: 0 4.5rem;
+  padding-block: clamp(1.5rem, 10svh, 5rem) 4.5rem;
 }
 
 .panel {
@@ -340,7 +340,7 @@ body {
   isolation: isolate;
   overflow: hidden;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   background: var(--b-bg);
   padding-block: 4rem;
   --m: 0;
@@ -356,7 +356,7 @@ body {
 .panel-grid {
   display: grid;
   gap: 2.5rem;
-  align-items: center;
+  align-items: start;
   width: 100%;
   max-width: 72rem;
   margin-inline: auto;
@@ -728,10 +728,10 @@ body {
 /* ---------------------------------------------------------------- */
 @media (max-width: 899px) {
   .work.is-h {
-    height: calc(100svh + (var(--n) - 1) * 80svh);
+    height: calc(100svh + (var(--n) - 1) * 100svh);
   }
   .work.is-h .panel {
-    padding-block: 0 3.2rem;
+    padding-block: 0.9rem 3.2rem;
   }
   .work.is-h .panel-grid {
     gap: 0.9rem;
@@ -820,4 +820,180 @@ body {
   .work.is-h .facts {
     margin-top: 0.6rem;
   }
+}
+
+/* ---------------------------------------------------------------- */
+/* Smooth mode: the browser runs the slide itself, in step with the  */
+/* scroll, so it never trails your finger. Needs scroll-linked       */
+/* animations; other browsers use the script-driven fallback.        */
+/* ---------------------------------------------------------------- */
+@keyframes track-slide {
+  to {
+    /* The track box is one screen wide; the panels overflow it. */
+    transform: translate3d(calc(-100% * (var(--n) - 1)), 0, 0);
+  }
+}
+@keyframes morph-laptop {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.78);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes morph-phones {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, calc(-50% - 3%)) scale(0.6);
+  }
+}
+@keyframes morph-phones-multi {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, calc(-50% - 2%)) scale(0.84);
+  }
+}
+@keyframes drift-scene {
+  from {
+    translate: -4.5rem 0;
+  }
+  to {
+    translate: 4.5rem 0;
+  }
+}
+@keyframes drift-copy {
+  from {
+    translate: 2.5rem 0;
+  }
+  to {
+    translate: -2.5rem 0;
+  }
+}
+@keyframes drift-num {
+  from {
+    translate: 6rem 0;
+  }
+  to {
+    translate: -6rem 0;
+  }
+}
+/* Written as separate properties on purpose: the minifier would otherwise merge them
+   into one `animation` shorthand that some browsers reject. */
+@supports (animation-timeline: scroll()) {
+  .work.tl .track {
+    animation-name: track-slide;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(root block);
+    animation-range-start: var(--s);
+    animation-range-end: var(--e);
+  }
+  .work.tl .panel .laptop {
+    animation-name: morph-laptop;
+  }
+  .work.tl .panel .scene-desktop .laptop {
+    animation-name: none;
+  }
+  .work.tl .panel .phones {
+    animation-name: morph-phones;
+  }
+  .work.tl .panel .phones.multi {
+    animation-name: morph-phones-multi;
+  }
+  .work.tl .panel .laptop,
+  .work.tl .panel .phones {
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+    animation-timeline: scroll(root block);
+    animation-range-start: var(--ms);
+    animation-range-end: var(--me);
+  }
+  .work.tl .panel .scene {
+    animation-name: drift-scene;
+  }
+  .work.tl .panel .copy {
+    animation-name: drift-copy;
+  }
+  .work.tl .panel .panel-num {
+    animation-name: drift-num;
+  }
+  .work.tl .panel .scene,
+  .work.tl .panel .copy,
+  .work.tl .panel .panel-num {
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(root block);
+    animation-range-start: var(--ps);
+    animation-range-end: var(--pe);
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Other projects: behind a button                                   */
+/* ---------------------------------------------------------------- */
+.other {
+  border-top: 1px solid var(--line);
+}
+.other-bar {
+  padding-block: 2rem;
+  display: flex;
+  justify-content: center;
+}
+.other-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--ink);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.other-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+.other-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding-inline: 0.4rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-size: 0.8rem;
+}
+.other-chevron {
+  transition: transform 0.3s ease;
+}
+.other-btn[aria-expanded="true"] .other-chevron {
+  transform: rotate(180deg);
+}
+.other-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.other-body[data-collapsed] {
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s 0.5s;
+}
+.other-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+.panel.extra {
+  transition: --m 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
 }

@@ -1,0 +1,54 @@
+---
+import type { CaseStudy } from "../data/site";
+import Scene from "./Scene.astro";
+
+interface Props {
+  p: CaseStudy;
+  index: number;
+  extra?: boolean;
+}
+const { p, index, extra = false } = Astro.props;
+const num = String(index + 1).padStart(2, "0");
+---
+
+<article
+  id={p.id}
+  class:list={["panel", extra && "extra"]}
+  data-brand={p.id}
+  data-title={p.title}
+  aria-label={p.title}
+>
+  <span class="panel-num" aria-hidden="true">{num}</span>
+  <div class="panel-grid">
+    <div class="copy">
+      <span class="match-tag">Matches what you picked</span>
+      <p class="label">{p.kicker}</p>
+      <h3 class="display mt-2">
+        {p.title}
+        {p.status && <span class="status">{p.status}</span>}
+      </h3>
+      <p class="summary">{p.summary}</p>
+      <ul class="points">
+        {p.points.map((pt) => <li>{pt}</li>)}
+      </ul>
+      <dl class="facts">
+        {
+          p.facts.map((f) => (
+            <div>
+              <dt>{f.label}</dt>
+              <dd>{f.value ?? <span class="todo">to add</span>}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      {
+        p.link && (
+          <a class="visit" href={p.link.href} target="_blank" rel="noopener">
+            Visit {p.link.label} <span aria-hidden="true">&#8599;</span>
+          </a>
+        )
+      }
+    </div>
+    <Scene study={p} />
+  </div>
+</article>

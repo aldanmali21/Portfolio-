@@ -31,3 +31,7 @@ _Avoid_: Skin, template, style
 **Device scene**:
 The mockup that frames a case study's screenshots: a phone that morphs into a laptop, or a laptop alone for desktop work.
 _Avoid_: Mockup, frame, preview
+
+**Other projects**:
+The projects kept out of the main slider and revealed by a button below it.
+_Avoid_: Archive, more work, see all

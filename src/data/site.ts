@@ -216,6 +216,10 @@ export const projects: CaseStudy[] = [
     device: "desktop",
     images: [{ placeholder: "Dashboard screenshot" }],
   },
+];
+
+/** Shown behind the "Other projects" button instead of in the main slider. */
+export const otherProjects: CaseStudy[] = [
   {
     id: "pearlworth",
     kicker: "School website",

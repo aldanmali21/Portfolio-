@@ -1,0 +1,26 @@
+---
+import { otherProjects, projects } from "../data/site";
+import Panel from "./Panel.astro";
+---
+
+<section id="other" class="other" data-other>
+  <div class="wrap other-bar">
+    <button
+      type="button"
+      class="other-btn"
+      data-other-btn
+      aria-expanded="false"
+      aria-controls="other-body"
+      hidden
+    >
+      Other projects
+      <span class="other-count">{otherProjects.length}</span>
+      <svg class="other-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+    </button>
+  </div>
+  <div id="other-body" class="other-body" data-other-body>
+    <div class="other-inner">
+      {otherProjects.map((p, i) => <Panel p={p} index={projects.length + i} extra />)}
+    </div>
+  </div>
+</section>
