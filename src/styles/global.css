@@ -545,7 +545,7 @@ body {
 .laptop {
   position: absolute;
   inset: 0 3% 10% 3%;
-  opacity: clamp(0, calc((var(--m) - 0.45) / 0.55), 1);
+  opacity: var(--m);
   transform: scale(calc(0.92 + 0.08 * var(--m)));
   transform-origin: 50% 70%;
 }
@@ -712,7 +712,7 @@ body {
   width: 36%;
   display: grid;
   gap: 1.5cqw;
-  opacity: clamp(0, calc(1 - var(--m) / 0.55), 1);
+  opacity: calc(1 - var(--m));
   transform: translate(-50%, -50%) scale(calc(1 - 0.1 * var(--m)));
 }
 .phones.multi {

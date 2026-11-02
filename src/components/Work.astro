@@ -80,7 +80,7 @@ const n = projects.length;
     //   f: 0 = phone, 1 = laptop. Right after a project is centred the device changes to
     //      the other form (project 1: phone to laptop, project 2: laptop to phone, ...).
     //   c: which project's screen is showing (a fraction while it slides to the next).
-    const MORPH = 0.4;
+    const MORPH = 0.45;
     const N = panels.length;
     function deviceState(u: number) {
       const U = clamp(u, 0, N - 1);
@@ -88,10 +88,11 @@ const n = projects.length;
       const w = clamp((U - k) / MORPH, 0, 1);
       const f = k % 2 === 0 ? w : 1 - w;
       const c = k + smooth(clamp((U - k - MORPH) / (1 - MORPH), 0, 1));
-      // One preview at a time: on the way to a laptop the phone fades out first and the
-      // laptop fades in after it; on the way back the laptop goes first.
-      const fp = 1 - smooth(clamp(f / 0.55, 0, 1));
-      const fl = smooth(clamp((f - 0.45) / 0.55, 0, 1));
+      // A true crossfade: as one device fades out the other fades in over the same
+      // stretch of scroll, so they overlap and trade places smoothly (and the same
+      // in reverse when the laptop turns back into a phone).
+      const fl = smooth(f);
+      const fp = 1 - fl;
       return {
         laptop: { opacity: fl, transform: `scale(${0.92 + 0.08 * fl})` },
         phones: { opacity: fp, transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * fp})` },
