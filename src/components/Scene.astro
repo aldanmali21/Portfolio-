@@ -22,6 +22,22 @@ const phoneImgs = desktop ? (study.mobile ?? [{ placeholder: "Mobile view" }]) :
             <span class="url">{study.urlLabel}</span>
           </div>
           {
+            !desktop && (
+              <div class="desk-shot desk-center">
+                <div
+                  class:list={["lap-shot", !("src" in first) && "is-ph"]}
+                  style={"src" in first && first.aspect ? `--ar:${first.aspect};--tone:${first.tone ?? "#fff"}` : undefined}
+                >
+                  {"src" in first ? (
+                    <img src={first.src} alt="" loading="eager" decoding="async" />
+                  ) : (
+                    <strong>{first.placeholder}</strong>
+                  )}
+                </div>
+              </div>
+            )
+          }
+          {
             desktop && (
               <div class="desk-shot">
                 {"src" in first ? (

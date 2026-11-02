@@ -32,8 +32,18 @@ const phoneScreen = (p: (typeof projects)[number]) =>
                   {
                     projects.map((p) => {
                       const shot = desktopShot(p);
+                      const flat = phoneScreen(p);
                       return (
                         <div class="slide lap-slide" data-brand={p.id}>
+                          {p.device === "phone" && (
+                            <div class:list={["lap-shot", !("src" in flat) && "is-ph"]} style={"src" in flat && flat.aspect ? `--ar:${flat.aspect};--tone:${flat.tone ?? "#fff"}` : undefined}>
+                              {"src" in flat ? (
+                                <img src={flat.src} alt="" loading="eager" decoding="async" />
+                              ) : (
+                                <strong>{flat.placeholder}</strong>
+                              )}
+                            </div>
+                          )}
                           {p.device === "desktop" && (
                             <div class="desk-shot">
                               {"src" in shot ? (

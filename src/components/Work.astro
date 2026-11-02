@@ -49,8 +49,6 @@ const n = projects.length;
     const phonesEl = device.querySelector<HTMLElement>("[data-phone]")!;
     const stripEls = Array.from(device.querySelectorAll<HTMLElement>("[data-strip]"));
     const urlEls = Array.from(device.querySelectorAll<HTMLElement>("[data-url]"));
-    // Phone projects keep their phone inside the laptop; desktop projects show a desktop screenshot.
-    const phoneKind = panels.map((el) => (el.querySelector(".scene-desktop") ? 0 : 1));
     const extras = Array.from(document.querySelectorAll<HTMLElement>(".panel.extra"));
     const ticks = Array.from(work.querySelectorAll<HTMLButtonElement>("[data-go]"));
     const header = document.querySelector("header");
@@ -79,26 +77,24 @@ const n = projects.length;
 
     // ONE laptop and ONE phone carry on through every project. For a scroll position u
     // (0 = first project centred, 1 = second, ...) this says what they look like:
-    //   f: 0 = phone, 1 = laptop. Right after a project is centred the device turns into
+    //   f: 0 = phone, 1 = laptop. Right after a project is centred the device changes to
     //      the other form (project 1: phone to laptop, project 2: laptop to phone, ...).
     //   c: which project's screen is showing (a fraction while it slides to the next).
-    const MORPH = 0.35;
+    const MORPH = 0.4;
     const N = panels.length;
     function deviceState(u: number) {
       const U = clamp(u, 0, N - 1);
       const k = Math.floor(U);
-      const w = smooth(clamp((U - k) / MORPH, 0, 1));
+      const w = clamp((U - k) / MORPH, 0, 1);
       const f = k % 2 === 0 ? w : 1 - w;
       const c = k + smooth(clamp((U - k - MORPH) / (1 - MORPH), 0, 1));
-      const lo = Math.floor(c);
-      const hi = Math.min(lo + 1, N - 1);
-      const wp = phoneKind[lo] * (1 - (c - lo)) + phoneKind[hi] * (c - lo);
+      // One preview at a time: on the way to a laptop the phone fades out first and the
+      // laptop fades in after it; on the way back the laptop goes first.
+      const fp = 1 - smooth(clamp(f / 0.55, 0, 1));
+      const fl = smooth(clamp((f - 0.45) / 0.55, 0, 1));
       return {
-        laptop: { opacity: f, transform: `scale(${0.78 + 0.22 * f})` },
-        phones: {
-          opacity: 1 - f * (1 - wp),
-          transform: `translate(-50%, ${-50 - 3 * f * wp}%) scale(${1 - f * (0.4 * wp + 0.2 * (1 - wp))})`,
-        },
+        laptop: { opacity: fl, transform: `scale(${0.92 + 0.08 * fl})` },
+        phones: { opacity: fp, transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * fp})` },
         strip: { transform: `translate3d(${(-c * 100) / N}%,0,0)` },
         urls: urlEls.map((_, i) => ({ opacity: clamp(1 - Math.abs(c - i) * 1.6, 0, 1) })),
       };
