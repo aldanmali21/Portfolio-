@@ -610,6 +610,10 @@ body {
     radial-gradient(90% 70% at 15% 0%, rgb(255 255 255 / 0.18), transparent 60%),
     color-mix(in srgb, var(--accent) 82%, #000);
 }
+/* In the shared laptop the wallpaper belongs to each project's slide instead. */
+.device .laptop-screen {
+  background: #000;
+}
 /* Reflection across the glass. */
 .laptop-screen::after {
   content: "";
@@ -1027,50 +1031,6 @@ body {
     transform: translate3d(calc(-100% * (var(--n) - 1)), 0, 0);
   }
 }
-@keyframes to-laptop {
-  from {
-    opacity: 0;
-    transform: scale(0.78);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-@keyframes phones-into-laptop {
-  from {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    transform: translate(-50%, calc(-50% - 3%)) scale(0.6);
-  }
-}
-@keyframes phones-into-laptop-multi {
-  from {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    transform: translate(-50%, calc(-50% - 2%)) scale(0.84);
-  }
-}
-@keyframes phones-away {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-}
-@keyframes drift-scene {
-  from {
-    translate: -4.5rem 0;
-  }
-  to {
-    translate: 4.5rem 0;
-  }
-}
 @keyframes drift-copy {
   from {
     translate: 2.5rem 0;
@@ -1096,7 +1056,8 @@ body {
   }
 }
 /* Written as separate properties on purpose: the minifier would otherwise merge them
-   into one `animation` shorthand that some browsers reject. */
+   into one `animation` shorthand that some browsers reject.
+   (The shared laptop and phone are animated from the script: see Work.astro.) */
 @supports (animation-timeline: scroll()) {
   .work.tl .track {
     animation-name: track-slide;
@@ -1106,41 +1067,12 @@ body {
     animation-range-start: var(--s);
     animation-range-end: var(--e);
   }
-  .work.tl .panel .laptop {
-    animation-name: to-laptop;
-  }
-  .work.tl .panel .phones {
-    animation-name: phones-into-laptop;
-  }
-  .work.tl .panel .phones.multi {
-    animation-name: phones-into-laptop-multi;
-  }
-  .work.tl .panel .scene-desktop .phones {
-    animation-name: phones-away;
-  }
-  .work.tl .panel .laptop,
-  .work.tl .panel .phones {
-    animation-timing-function: ease-in-out;
-    animation-fill-mode: both;
-    animation-timeline: scroll(root block);
-    animation-range-start: var(--ms);
-    animation-range-end: var(--me);
-  }
-  /* 2nd and 4th projects arrive as a laptop, so their change plays backwards. */
-  .work.tl .track > .panel:nth-child(even) .laptop,
-  .work.tl .track > .panel:nth-child(even) .phones {
-    animation-direction: reverse;
-  }
-  .work.tl .panel .scene {
-    animation-name: drift-scene;
-  }
   .work.tl .panel .copy {
     animation-name: drift-copy;
   }
   .work.tl .panel .panel-num {
     animation-name: drift-num;
   }
-  .work.tl .panel .scene,
   .work.tl .panel .copy,
   .work.tl .panel .panel-num {
     animation-timing-function: linear;
@@ -1252,4 +1184,104 @@ body {
 }
 .work.is-h .panel + .panel {
   border-left: 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* The shared laptop and phone                                       */
+/* One of each carries through every project. Their screens hold a   */
+/* strip with one slide per project and slide sideways between them. */
+/* ---------------------------------------------------------------- */
+.device-layer {
+  display: none;
+}
+.work.is-h .device-layer {
+  display: flex;
+  align-items: flex-start;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding-block: clamp(1.5rem, 10svh, 5rem) 4.5rem;
+  pointer-events: none;
+}
+/* The per-project scenes still hold the layout (and are used when the projects stack). */
+.work.is-h .panel .scene {
+  visibility: hidden;
+}
+@media (max-width: 899px) {
+  .work.is-h .device-layer {
+    padding-block: 0.9rem 3.2rem;
+  }
+}
+.device .view {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.device .strip {
+  display: flex;
+  width: calc(var(--n) * 100%);
+  height: 100%;
+  will-change: transform;
+}
+.device .slide {
+  position: relative;
+  flex: 0 0 calc(100% / var(--n));
+  min-width: 0;
+  height: 100%;
+}
+.device .lap-slide {
+  background:
+    radial-gradient(90% 70% at 15% 0%, rgb(255 255 255 / 0.18), transparent 60%),
+    color-mix(in srgb, var(--accent) 82%, #000);
+}
+.device .lap-slide .desk-shot {
+  position: absolute;
+  inset: 0;
+  flex: none;
+}
+/* The address in the laptop's browser bar changes with the project. */
+.device .urls {
+  display: inline-grid;
+  margin-left: 1.2cqw;
+  padding: 0.2cqw 1.8cqw;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.3);
+  color: #fff;
+  font-size: clamp(0.5rem, 1.7cqw, 0.72rem);
+  letter-spacing: 0.02em;
+}
+.device .urls .url {
+  grid-area: 1 / 1;
+  margin: 0;
+  padding: 0;
+  background: none;
+  font-size: inherit;
+  white-space: nowrap;
+  opacity: 0;
+}
+.device .urls .url:first-child {
+  opacity: 1;
+}
+/* One phone screen shape for every project; a screenshot that is a little shorter sits on
+   its own background colour. */
+.device .ph-view {
+  flex: none;
+  aspect-ratio: 640 / 1267;
+  background: #000;
+}
+.device .ph-slide {
+  background: var(--tone, var(--paper-2));
+}
+.device .ph-slide img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.device .ph-slide .ph-body {
+  position: absolute;
+  inset: 0;
+}
+.device .phones .todo {
+  display: none;
 }

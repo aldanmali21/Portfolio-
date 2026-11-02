@@ -22,9 +22,9 @@ export interface CaseStudy {
   /** "phone": mobile screenshots morph into a laptop scene. "desktop": a desktop screenshot fills the laptop. */
   device: "phone" | "desktop";
   /** Real screenshots in /public/images, or placeholder labels when not yet supplied. */
-  images: { src: string; alt: string }[] | { placeholder: string }[];
+  images: { src: string; alt: string; tone?: string }[] | { placeholder: string }[];
   /** For "desktop" projects: the phone view shown while the device is a phone. */
-  mobile?: { src: string; alt: string }[] | { placeholder: string }[];
+  mobile?: { src: string; alt: string; tone?: string }[] | { placeholder: string }[];
 }
 
 export interface NeedChip {
@@ -114,7 +114,9 @@ export const projects: CaseStudy[] = [
     link: { href: "https://farmarq.com", label: "farmarq.com" },
     urlLabel: "farmarq.com",
     device: "phone",
-    images: [{ src: "/images/farmarq.webp", alt: "Farmarq home page on a phone" }],
+    images: [
+      { src: "/images/farmarq.webp", alt: "Farmarq home page on a phone", tone: "#dec9bb" },
+    ],
   },
   {
     id: "kampala-dermatology",
@@ -139,6 +141,7 @@ export const projects: CaseStudy[] = [
       {
         src: "/images/kampala-dermatology.webp",
         alt: "Kampala Dermatology home page on a phone",
+        tone: "#e3e9e6",
       },
     ],
   },
@@ -166,6 +169,7 @@ export const projects: CaseStudy[] = [
       {
         src: "/images/real-estate-ai.webp",
         alt: "Telegram chat with the Real Estate AI Assistant matching a listing and booking a viewing",
+        tone: "#90b897",
       },
     ],
   },

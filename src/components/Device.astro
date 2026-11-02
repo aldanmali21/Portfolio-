@@ -1,0 +1,106 @@
+---
+import { projects } from "../data/site";
+
+const n = projects.length;
+const desktopShot = (p: (typeof projects)[number]) => p.images[0];
+// The shared phone shows one screen per project: its phone screenshot, or its mobile view.
+const phoneScreen = (p: (typeof projects)[number]) =>
+  (p.device === "desktop" ? (p.mobile ?? [{ placeholder: "Mobile view" }]) : p.images)[0];
+---
+
+<!--
+  One laptop and one phone for the whole slider. Only what is inside their screens
+  changes from project to project, so the same device carries on into the next project
+  instead of one leaving while another arrives.
+-->
+<div class="device-layer" aria-hidden="true">
+  <div class="panel-grid">
+    <div></div>
+    <div class="scene device" data-device style={`--n:${n}`}>
+      <div class="laptop">
+        <div class="laptop-lid">
+          <div class="laptop-bezel">
+            <div class="laptop-screen">
+              <div class="chrome">
+                <i></i><i></i><i></i>
+                <span class="urls">
+                  {projects.map((p) => <span class="url" data-url>{p.urlLabel}</span>)}
+                </span>
+              </div>
+              <div class="view">
+                <div class="strip" data-strip>
+                  {
+                    projects.map((p) => {
+                      const shot = desktopShot(p);
+                      return (
+                        <div class="slide lap-slide" data-brand={p.id}>
+                          {p.device === "desktop" && (
+                            <div class="desk-shot">
+                              {"src" in shot ? (
+                                <img src={shot.src} alt="" loading="eager" decoding="async" />
+                              ) : (
+                                <div class="desk-placeholder">
+                                  <strong>{shot.placeholder}</strong>
+                                  <span class="todo">screenshot to add</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="laptop-base"></div>
+      </div>
+
+      <div class="phones" data-phone>
+        <figure class="frame">
+          <div class="phone">
+            <i class="btn btn-act"></i>
+            <i class="btn btn-up"></i>
+            <i class="btn btn-down"></i>
+            <i class="btn btn-pwr"></i>
+            <div class="phone-bezel">
+              <div class="phone-screen">
+                <div class="statusbar">
+                  <span class="clock">9:41</span>
+                  <i class="island"></i>
+                  <i class="bat"></i>
+                </div>
+                <div class="view ph-view">
+                  <div class="strip" data-strip>
+                    {
+                      projects.map((p) => {
+                        const sc = phoneScreen(p);
+                        return (
+                          <div class="slide ph-slide" style={"src" in sc && sc.tone ? `--tone:${sc.tone}` : undefined}>
+                            {"src" in sc ? (
+                              <img src={sc.src} alt="" width="640" loading="eager" decoding="async" />
+                            ) : (
+                              <div class="ph-body">
+                                <div>
+                                  <strong>{sc.placeholder}</strong>
+                                  <span class="todo">screenshot to add</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+                </div>
+                <i class="home-bar"></i>
+              </div>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </div>
+</div>

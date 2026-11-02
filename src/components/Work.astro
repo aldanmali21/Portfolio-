@@ -1,6 +1,7 @@
 ---
 import { projects } from "../data/site";
 import Panel from "./Panel.astro";
+import Device from "./Device.astro";
 
 const n = projects.length;
 ---
@@ -16,6 +17,7 @@ const n = projects.length;
     <div class="track">
       {projects.map((p, i) => <Panel p={p} index={i} />)}
     </div>
+    <Device />
     <div class="rail" data-rail>
       <span class="rail-count"><span data-rail-num>01 / 05</span><span class="rail-title" data-rail-title></span></span>
       <div class="rail-ticks">
@@ -42,6 +44,13 @@ const n = projects.length;
     const railTitle = work.querySelector<HTMLElement>("[data-rail-title]")!;
     const panels = Array.from(work.querySelectorAll<HTMLElement>(".panel"));
     const bgs = Array.from(work.querySelectorAll<HTMLElement>(".bg"));
+    const device = work.querySelector<HTMLElement>("[data-device]")!;
+    const laptopEl = device.querySelector<HTMLElement>(".laptop")!;
+    const phonesEl = device.querySelector<HTMLElement>("[data-phone]")!;
+    const stripEls = Array.from(device.querySelectorAll<HTMLElement>("[data-strip]"));
+    const urlEls = Array.from(device.querySelectorAll<HTMLElement>("[data-url]"));
+    // Phone projects keep their phone inside the laptop; desktop projects show a desktop screenshot.
+    const phoneKind = panels.map((el) => (el.querySelector(".scene-desktop") ? 0 : 1));
     const extras = Array.from(document.querySelectorAll<HTMLElement>(".panel.extra"));
     const ticks = Array.from(work.querySelectorAll<HTMLButtonElement>("[data-go]"));
     const header = document.querySelector("header");
@@ -50,7 +59,12 @@ const n = projects.length;
     );
     // Where the browser can run scroll-linked animations itself, the slide follows your
     // finger exactly instead of trailing it by a frame.
-    const hasTimeline = !!(window.CSS && CSS.supports && CSS.supports("animation-timeline: scroll()"));
+    const hasTimeline = !!(
+      window.CSS &&
+      CSS.supports &&
+      CSS.supports("animation-timeline: scroll()") &&
+      "ScrollTimeline" in window
+    );
 
     const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
     const smooth = (t: number) => t * t * (3 - 2 * t);
@@ -62,6 +76,83 @@ const n = projects.length;
     let timeline = false;
     let raf = 0;
     let active = -1;
+
+    // ONE laptop and ONE phone carry on through every project. For a scroll position u
+    // (0 = first project centred, 1 = second, ...) this says what they look like:
+    //   f: 0 = phone, 1 = laptop. Right after a project is centred the device turns into
+    //      the other form (project 1: phone to laptop, project 2: laptop to phone, ...).
+    //   c: which project's screen is showing (a fraction while it slides to the next).
+    const MORPH = 0.35;
+    const N = panels.length;
+    function deviceState(u: number) {
+      const U = clamp(u, 0, N - 1);
+      const k = Math.floor(U);
+      const w = smooth(clamp((U - k) / MORPH, 0, 1));
+      const f = k % 2 === 0 ? w : 1 - w;
+      const c = k + smooth(clamp((U - k - MORPH) / (1 - MORPH), 0, 1));
+      const lo = Math.floor(c);
+      const hi = Math.min(lo + 1, N - 1);
+      const wp = phoneKind[lo] * (1 - (c - lo)) + phoneKind[hi] * (c - lo);
+      return {
+        laptop: { opacity: f, transform: `scale(${0.78 + 0.22 * f})` },
+        phones: {
+          opacity: 1 - f * (1 - wp),
+          transform: `translate(-50%, ${-50 - 3 * f * wp}%) scale(${1 - f * (0.4 * wp + 0.2 * (1 - wp))})`,
+        },
+        strip: { transform: `translate3d(${(-c * 100) / N}%,0,0)` },
+        urls: urlEls.map((_, i) => ({ opacity: clamp(1 - Math.abs(c - i) * 1.6, 0, 1) })),
+      };
+    }
+    function applyDevice(u: number) {
+      const st = deviceState(u);
+      Object.assign(laptopEl.style, { opacity: String(st.laptop.opacity), transform: st.laptop.transform });
+      Object.assign(phonesEl.style, { opacity: String(st.phones.opacity), transform: st.phones.transform });
+      stripEls.forEach((el) => (el.style.transform = st.strip.transform));
+      urlEls.forEach((el, i) => (el.style.opacity = String(st.urls[i].opacity)));
+    }
+    function clearDevice() {
+      [laptopEl, phonesEl, ...stripEls, ...urlEls].forEach((el) => {
+        el.style.opacity = "";
+        el.style.transform = "";
+      });
+    }
+
+    // Scroll-linked: the same maths, sampled into keyframes the browser plays on its own.
+    let deviceAnims: Animation[] = [];
+    function cancelDeviceAnims() {
+      deviceAnims.forEach((a) => a.cancel());
+      deviceAnims = [];
+    }
+    function buildDeviceAnims(start: number, seg: number) {
+      cancelDeviceAnims();
+      const maxScroll = document.documentElement.scrollHeight - innerHeight;
+      if (maxScroll <= 0) return;
+      const STEPS = 40;
+      const total = (N - 1) * STEPS;
+      const tl = new (window as any).ScrollTimeline({ source: document.scrollingElement, axis: "block" });
+      const samples = Array.from({ length: total + 1 }, (_, i) => {
+        const u = i / STEPS;
+        return { offset: clamp((start + u * seg) / maxScroll, 0, 1), st: deviceState(u) };
+      });
+      const frames = (pick: (st: ReturnType<typeof deviceState>) => Keyframe) => {
+        const out: Keyframe[] = [];
+        let prev = 0;
+        const push = (offset: number, st: ReturnType<typeof deviceState>) => {
+          prev = Math.max(prev, offset);
+          out.push({ offset: prev, ...pick(st) });
+        };
+        push(0, samples[0].st);
+        samples.forEach((sm) => push(sm.offset, sm.st));
+        push(1, samples[samples.length - 1].st);
+        return out;
+      };
+      const run = (el: HTMLElement, pick: (st: ReturnType<typeof deviceState>) => Keyframe) =>
+        deviceAnims.push(el.animate(frames(pick), { timeline: tl, fill: "both", easing: "linear" } as any));
+      run(laptopEl, (st) => st.laptop);
+      run(phonesEl, (st) => st.phones);
+      stripEls.forEach((el) => run(el, (st) => st.strip));
+      urlEls.forEach((el, i) => run(el, (st) => st.urls[i]));
+    }
 
     // Tell the stylesheet where each animation starts and ends, in scroll pixels.
     function layoutTimeline() {
@@ -76,11 +167,9 @@ const n = projects.length;
         el.style.setProperty("--bs", `${Math.max(0, c - 0.9 * seg)}px`);
         el.style.setProperty("--be", `${c - 0.1 * seg}px`);
       });
+      buildDeviceAnims(start, seg);
       panels.forEach((el, i) => {
         const c = start + i * seg;
-        // The phone/laptop change plays just after a project is centred.
-        el.style.setProperty("--ms", `${c}px`);
-        el.style.setProperty("--me", `${c + 0.35 * seg}px`);
         el.style.setProperty("--ps", `${Math.max(0, c - seg)}px`);
         el.style.setProperty("--pe", `${c + seg}px`);
       });
@@ -108,12 +197,9 @@ const n = projects.length;
         const u = p * (panels.length - 1);
         panels.forEach((el, i) => {
           const d = (i * vw - p * maxX) / vw;
-          // Phone, then laptop, then phone again: each project turns the opposite way
-          // to the one before it, just after it is centred.
-          const t = smooth(clamp((u - i) / 0.35, 0, 1));
-          el.style.setProperty("--m", String(i % 2 === 0 ? t : 1 - t));
           el.style.setProperty("--d", String(clamp(d, -1, 1)));
         });
+        applyDevice(u);
         bgs.forEach((el, i) => {
           if (i > 0) el.style.opacity = String(smooth(clamp((u - (i - 0.9)) / 0.8, 0, 1)));
         });
@@ -176,13 +262,15 @@ const n = projects.length;
       window.removeEventListener("resize", onResize);
       window.removeEventListener("load", relayout);
       track.style.transform = "";
+      cancelDeviceAnims();
+      clearDevice();
       ["--s", "--e"].forEach((v) => work!.style.removeProperty(v));
       bgs.forEach((el) => {
         el.style.opacity = "";
         ["--bs", "--be"].forEach((v) => el.style.removeProperty(v));
       });
       panels.forEach((el) => {
-        ["--ms", "--me", "--ps", "--pe"].forEach((v) => el.style.removeProperty(v));
+        ["--ps", "--pe"].forEach((v) => el.style.removeProperty(v));
         el.style.setProperty("--m", "0");
         el.style.setProperty("--d", "0");
         io.observe(el);
