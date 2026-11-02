@@ -1050,28 +1050,62 @@ body {
     transform: translate(-50%, calc(-50% - 2%)) scale(0.84);
   }
 }
-@keyframes drift-scene {
+/* The screens stay locked to one spot on the display while the track slides past:
+   the scene is pushed back by exactly the distance the track moves (100cqw is the
+   stage width), plus a little drift so the outgoing and incoming screens pass each other. */
+@keyframes merge-move {
   from {
-    translate: -4.5rem 0;
+    translate: calc(6cqw - 100cqw) 0;
   }
   to {
-    translate: 4.5rem 0;
+    translate: calc(100cqw - 6cqw) 0;
   }
 }
-@keyframes drift-copy {
+@keyframes merge-move-copy {
   from {
-    translate: 2.5rem 0;
+    translate: calc(12cqw - 100cqw) 0;
   }
   to {
-    translate: -2.5rem 0;
+    translate: calc(100cqw - 12cqw) 0;
   }
 }
-@keyframes drift-num {
+@keyframes merge-move-num {
   from {
-    translate: 6rem 0;
+    translate: calc(18cqw - 100cqw) 0;
   }
   to {
-    translate: -6rem 0;
+    translate: calc(100cqw - 18cqw) 0;
+  }
+}
+/* ...while they dissolve into one another. */
+@keyframes merge-fade {
+  0%,
+  100% {
+    opacity: 0;
+    scale: 0.94;
+  }
+  50% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes copy-fade {
+  0%,
+  27%,
+  73%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes bg-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 /* Written as separate properties on purpose: the minifier would otherwise merge them
@@ -1105,23 +1139,39 @@ body {
     animation-range-start: var(--ms);
     animation-range-end: var(--me);
   }
+  /* Two animations on each, so movement stays linear while fades are eased. */
   .work.tl .panel .scene {
-    animation-name: drift-scene;
+    animation-name: merge-move, merge-fade;
+    animation-timing-function: linear, ease-in-out;
+    animation-fill-mode: both, both;
+    animation-timeline: scroll(root block), scroll(root block);
+    animation-range-start: var(--ps), var(--ps);
+    animation-range-end: var(--pe), var(--pe);
   }
   .work.tl .panel .copy {
-    animation-name: drift-copy;
+    animation-name: merge-move-copy, copy-fade;
+    animation-timing-function: linear, ease-in-out;
+    animation-fill-mode: both, both;
+    animation-timeline: scroll(root block), scroll(root block);
+    animation-range-start: var(--ps), var(--ps);
+    animation-range-end: var(--pe), var(--pe);
   }
   .work.tl .panel .panel-num {
-    animation-name: drift-num;
+    animation-name: merge-move-num, copy-fade;
+    animation-timing-function: linear, ease-in-out;
+    animation-fill-mode: both, both;
+    animation-timeline: scroll(root block), scroll(root block);
+    animation-range-start: var(--ps), var(--ps);
+    animation-range-end: var(--pe), var(--pe);
   }
-  .work.tl .panel .scene,
-  .work.tl .panel .copy,
-  .work.tl .panel .panel-num {
-    animation-timing-function: linear;
+  /* Each background fades in over the one before it. */
+  .work.tl .bg:not(:first-child) {
+    animation-name: bg-in;
+    animation-timing-function: ease-in-out;
     animation-fill-mode: both;
     animation-timeline: scroll(root block);
-    animation-range-start: var(--ps);
-    animation-range-end: var(--pe);
+    animation-range-start: var(--bs);
+    animation-range-end: var(--be);
   }
 }
 
@@ -1184,4 +1234,53 @@ body {
 }
 .panel.extra {
   transition: --m 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ---------------------------------------------------------------- */
+/* Join: one continuous background, screens that merge               */
+/* ---------------------------------------------------------------- */
+.bgs {
+  display: none;
+}
+.work.is-h .bgs {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.bg {
+  position: absolute;
+  inset: 0;
+  background: var(--b-bg);
+}
+.work.is-h .bg:not(:first-child) {
+  opacity: 0;
+}
+.work.is-h .stage {
+  container-type: inline-size;
+}
+.work.is-h .track {
+  position: relative;
+  z-index: 1;
+}
+.work.is-h .panel {
+  background: transparent;
+  overflow: visible;
+}
+.work.is-h .panel + .panel {
+  border-left: 0;
+}
+.work.is-h .scene {
+  pointer-events: none;
+  translate: calc(var(--d) * (6cqw - 100cqw)) 0;
+  opacity: var(--so, 1);
+  scale: calc(0.94 + 0.06 * var(--so, 1));
+}
+.work.is-h .copy {
+  translate: calc(var(--d) * (12cqw - 100cqw)) 0;
+  opacity: var(--co, 1);
+}
+.work.is-h .panel-num {
+  translate: calc(var(--d) * (18cqw - 100cqw)) 0;
+  opacity: var(--co, 1);
 }

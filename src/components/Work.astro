@@ -10,6 +10,9 @@ const n = projects.length;
     <p class="label">Selected work</p>
   </div>
   <div class="stage">
+    <div class="bgs" aria-hidden="true">
+      {projects.map((p) => <div class="bg" data-brand={p.id}></div>)}
+    </div>
     <div class="track">
       {projects.map((p, i) => <Panel p={p} index={i} />)}
     </div>
@@ -38,6 +41,7 @@ const n = projects.length;
     const railNum = work.querySelector<HTMLElement>("[data-rail-num]")!;
     const railTitle = work.querySelector<HTMLElement>("[data-rail-title]")!;
     const panels = Array.from(work.querySelectorAll<HTMLElement>(".panel"));
+    const bgs = Array.from(work.querySelectorAll<HTMLElement>(".bg"));
     const extras = Array.from(document.querySelectorAll<HTMLElement>(".panel.extra"));
     const ticks = Array.from(work.querySelectorAll<HTMLButtonElement>("[data-go]"));
     const header = document.querySelector("header");
@@ -66,6 +70,12 @@ const n = projects.length;
       const seg = sp / (panels.length - 1);
       work!.style.setProperty("--s", `${start}px`);
       work!.style.setProperty("--e", `${start + sp}px`);
+      bgs.forEach((el, i) => {
+        if (i === 0) return;
+        const c = start + i * seg;
+        el.style.setProperty("--bs", `${Math.max(0, c - 0.9 * seg)}px`);
+        el.style.setProperty("--be", `${c - 0.1 * seg}px`);
+      });
       panels.forEach((el, i) => {
         const c = start + i * seg;
         el.style.setProperty("--ms", `${Math.max(0, c - 0.85 * seg)}px`);
@@ -85,6 +95,7 @@ const n = projects.length;
 
     function render() {
       raf = 0;
+      if (!pinned) return;
       const hh = headerH();
       const rect = work!.getBoundingClientRect();
       const p = clamp((hh - rect.top) / span(), 0, 1);
@@ -100,6 +111,14 @@ const n = projects.length;
           const mh = 1 - smooth(clamp(Math.abs(d) / 0.85, 0, 1));
           el.style.setProperty("--m", String(Math.min(mh, entry, 1 - exit)));
           el.style.setProperty("--d", String(clamp(d, -1, 1)));
+          // How "present" this project is: 1 when centred, fading to 0 a screen away.
+          el.style.setProperty("--so", String(smooth(clamp(1 - Math.abs(d), 0, 1))));
+          // Text is only visible near the centre, so two text blocks never overlap.
+          el.style.setProperty("--co", String(smooth(clamp((0.46 - Math.abs(d)) / 0.46, 0, 1))));
+        });
+        const u = p * (panels.length - 1);
+        bgs.forEach((el, i) => {
+          if (i > 0) el.style.opacity = String(smooth(clamp((u - (i - 0.9)) / 0.8, 0, 1)));
         });
       }
       const idx = Math.round(p * (panels.length - 1));
@@ -108,6 +127,8 @@ const n = projects.length;
         ticks.forEach((t, i) => t.setAttribute("aria-current", String(i === idx)));
         railNum.textContent = `${pad(idx)} / ${pad(panels.length - 1)}`;
         railTitle.textContent = panels[idx].dataset.title ?? "";
+        // Only the project in view is interactive; the others sit invisibly in the same spot.
+        panels.forEach((el, i) => el.querySelector(".copy")?.toggleAttribute("inert", i !== idx));
         rail.setAttribute("data-brand", panels[idx].id);
       }
     }
@@ -130,6 +151,11 @@ const n = projects.length;
 
     const ro = new ResizeObserver(relayout);
 
+    const onResize = () => {
+      schedule();
+      relayout();
+    };
+
     function enablePinned() {
       pinned = true;
       panels.forEach((el) => io.unobserve(el));
@@ -142,10 +168,7 @@ const n = projects.length;
         window.addEventListener("load", relayout);
       }
       window.addEventListener("scroll", schedule, { passive: true });
-      window.addEventListener("resize", () => {
-        schedule();
-        relayout();
-      });
+      window.addEventListener("resize", onResize);
       active = -1;
       render();
     }
@@ -153,14 +176,23 @@ const n = projects.length;
       pinned = false;
       timeline = false;
       work!.classList.remove("is-h", "tl");
+      panels.forEach((el) => el.querySelector(".copy")?.removeAttribute("inert"));
       ro.disconnect();
       window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("load", relayout);
       track.style.transform = "";
       ["--s", "--e"].forEach((v) => work!.style.removeProperty(v));
+      bgs.forEach((el) => {
+        el.style.opacity = "";
+        ["--bs", "--be"].forEach((v) => el.style.removeProperty(v));
+      });
       panels.forEach((el) => {
         ["--ms", "--me", "--ps", "--pe"].forEach((v) => el.style.removeProperty(v));
         el.style.setProperty("--m", "0");
         el.style.setProperty("--d", "0");
+        el.style.removeProperty("--so");
+        el.style.removeProperty("--co");
         io.observe(el);
       });
     }
