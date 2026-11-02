@@ -91,6 +91,9 @@ const n = projects.length;
     //   c: which project's screen is showing (a fraction while it slides to the next).
     const MORPH = 0.5;
     const N = panels.length;
+    // The slider runs one change longer than the last project: Akalimo is centred as a phone,
+    // then turns into the laptop, and the scrolling ends when that change is finished.
+    const maxU = N - 1 + MORPH;
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
     // Sizes of the two devices, measured from the page (layout size ignores transforms).
@@ -109,7 +112,7 @@ const n = projects.length;
     }
 
     function deviceState(u: number) {
-      const U = clamp(u, 0, N - 1);
+      const U = clamp(u, 0, maxU);
       const k = Math.floor(U);
       const w = clamp((U - k) / MORPH, 0, 1);
       const f = k % 2 === 0 ? w : 1 - w;
@@ -201,7 +204,7 @@ const n = projects.length;
       const maxScroll = document.documentElement.scrollHeight - innerHeight;
       if (maxScroll <= 0) return;
       const STEPS = 40;
-      const total = (N - 1) * STEPS;
+      const total = Math.round(maxU * STEPS);
       const tl = new (window as any).ScrollTimeline({ source: document.scrollingElement, axis: "block" });
       const samples = Array.from({ length: total + 1 }, (_, i) => {
         const u = i / STEPS;
@@ -228,9 +231,10 @@ const n = projects.length;
     function layoutTimeline() {
       const start = window.scrollY + work!.getBoundingClientRect().top - headerH();
       const sp = span();
-      const seg = sp / (panels.length - 1);
+      const seg = sp / maxU;
       work!.style.setProperty("--s", `${start}px`);
-      work!.style.setProperty("--e", `${start + sp}px`);
+      // The sideways slide stops when the last project arrives; the final change plays after it.
+      work!.style.setProperty("--e", `${start + (N - 1) * seg}px`);
       bgs.forEach((el, i) => {
         if (i === 0) return;
         const c = start + i * seg;
@@ -262,11 +266,11 @@ const n = projects.length;
       if (!timeline) {
         // Fallback for browsers without scroll-linked animations.
         const vw = stage.clientWidth;
-        const maxX = (panels.length - 1) * vw;
-        track.style.transform = `translate3d(${-p * maxX}px,0,0)`;
-        const u = p * (panels.length - 1);
+        const u = p * maxU;
+        const slide = Math.min(u, N - 1); // the slide stops on the last project
+        track.style.transform = `translate3d(${-slide * vw}px,0,0)`;
         panels.forEach((el, i) => {
-          const d = (i * vw - p * maxX) / vw;
+          const d = i - slide;
           el.style.setProperty("--d", String(clamp(d, -1, 1)));
         });
         applyDevice(u);
@@ -274,7 +278,7 @@ const n = projects.length;
           if (i > 0) el.style.opacity = String(smooth(clamp((u - (i - 0.9)) / 0.8, 0, 1)));
         });
       }
-      const idx = Math.round(p * (panels.length - 1));
+      const idx = Math.round(Math.min(p * maxU, N - 1));
       if (idx !== active) {
         active = idx;
         ticks.forEach((t, i) => t.setAttribute("aria-current", String(i === idx)));
@@ -355,7 +359,7 @@ const n = projects.length;
     function goTo(i: number, behavior: ScrollBehavior = "smooth") {
       if (pinned) {
         const absTop = window.scrollY + work!.getBoundingClientRect().top;
-        const target = absTop - headerH() + (i / (panels.length - 1)) * span();
+        const target = absTop - headerH() + (i / maxU) * span();
         window.scrollTo({ top: target, behavior });
       } else {
         panels[i].scrollIntoView({ behavior, block: "start" });

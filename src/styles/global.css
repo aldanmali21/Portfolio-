@@ -314,6 +314,8 @@ body {
 .work {
   position: relative;
   border-top: 1px solid var(--line);
+  /* Extra scroll after the last project, for its phone-to-laptop change (matches MORPH in Work.astro). */
+  --tail: 0.5;
 }
 .stage {
   position: relative;
@@ -324,7 +326,7 @@ body {
 
 /* Pinned mode (set by script on large screens without reduced motion). */
 .work.is-h {
-  height: calc(100svh + (var(--n) - 1) * 90svh);
+  height: calc(100svh + (var(--n) - 1 + var(--tail)) * 90svh);
 }
 .work.is-h .stage {
   position: sticky;
@@ -895,7 +897,7 @@ body {
 /* ---------------------------------------------------------------- */
 @media (max-width: 899px) {
   .work.is-h {
-    height: calc(100svh + (var(--n) - 1) * 100svh);
+    height: calc(100svh + (var(--n) - 1 + var(--tail)) * 100svh);
   }
   .work.is-h .panel {
     padding-block: 0.9rem 3.2rem;
