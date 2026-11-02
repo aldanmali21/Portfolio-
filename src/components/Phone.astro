@@ -1,0 +1,39 @@
+---
+interface Props {
+  src?: string;
+  alt?: string;
+  label?: string;
+}
+const { src, alt = "", label } = Astro.props;
+---
+
+<figure class="frame" aria-label={src ? undefined : `Placeholder: ${label}`}>
+  <div class="phone">
+    <i class="btn btn-act" aria-hidden="true"></i>
+    <i class="btn btn-up" aria-hidden="true"></i>
+    <i class="btn btn-down" aria-hidden="true"></i>
+    <i class="btn btn-pwr" aria-hidden="true"></i>
+    <div class="phone-bezel">
+      <div class:list={["phone-screen", !src && "is-ph"]}>
+        <div class="statusbar" aria-hidden="true">
+          <span class="clock">9:41</span>
+          <i class="island"></i>
+          <i class="bat"></i>
+        </div>
+        {
+          src ? (
+            <img src={src} alt={alt} width="640" loading="eager" decoding="async" />
+          ) : (
+            <div class="ph-body">
+              <div>
+                <strong>{label}</strong>
+                <span class="todo">screenshot to add</span>
+              </div>
+            </div>
+          )
+        }
+        <i class="home-bar" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+</figure>
