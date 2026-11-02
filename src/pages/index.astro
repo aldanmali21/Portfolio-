@@ -1,0 +1,112 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import CaseStudy from "../components/CaseStudy.astro";
+import AlsoBuilt from "../components/AlsoBuilt.astro";
+import {
+  profile,
+  caseStudies,
+  alsoBuilt,
+  process,
+  experience,
+  skills,
+} from "../data/site";
+
+const year = new Date().getFullYear();
+---
+
+<Base
+  title={`${profile.name} | ${profile.headline}`}
+  description={profile.subline}
+>
+  <Header />
+  <main>
+    <Hero />
+
+    <section id="work" class="border-t border-line">
+      <div class="wrap">
+        <p class="eyebrow pt-14">Selected work</p>
+        {caseStudies.map((study, i) => <CaseStudy study={study} index={i} />)}
+      </div>
+    </section>
+
+    <section id="also" class="border-t border-line bg-paper-2/40">
+      <div class="wrap py-14 sm:py-20">
+        <p class="eyebrow">Also built</p>
+        <div class="mt-6">
+          <AlsoBuilt items={alsoBuilt} />
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="border-t border-line">
+      <div class="wrap py-14 sm:py-20">
+        <p class="eyebrow">How I work</p>
+        <h2 class="display mt-3 max-w-2xl text-3xl sm:text-4xl">
+          Plain steps, no surprises.
+        </h2>
+        <ol class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {
+            process.map((step, i) => (
+              <li>
+                <span class="display text-3xl text-accent">{i + 1}</span>
+                <h3 class="mt-2 font-semibold">{step.title}</h3>
+                <p class="mt-1 text-muted">{step.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section id="about" class="border-t border-line bg-paper-2/40">
+      <div class="wrap grid gap-12 py-14 sm:py-20 md:grid-cols-2">
+        <div>
+          <p class="eyebrow">Experience</p>
+          <ul class="mt-6 space-y-6">
+            {
+              experience.map((e) => (
+                <li>
+                  <p class="font-semibold">{e.title}</p>
+                  <p class="text-muted">{e.place}</p>
+                  <p class="text-sm text-muted">{e.when}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div>
+          <p class="eyebrow">Tools I work with</p>
+          <ul class="mt-6 flex flex-wrap gap-2">
+            {
+              skills.map((s) => (
+                <li class="rounded-full border border-line px-3 py-1 text-sm">{s}</li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="border-t border-line">
+      <div class="wrap py-16 sm:py-24">
+        <h2 class="display max-w-3xl text-4xl sm:text-6xl">
+          Have something that needs to run itself?
+        </h2>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={profile.whatsapp} class="btn btn-primary">Message me on WhatsApp</a>
+          <a href={`mailto:${profile.email}`} class="btn btn-ghost">{profile.email}</a>
+        </div>
+        <p class="mt-6 text-muted">
+          {profile.phone} &middot; {profile.location} &middot;
+          <a href={profile.github} class="underline hover:text-accent" rel="noopener">GitHub</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-line">
+    <div class="wrap py-6 text-sm text-muted">&copy; {year} {profile.name}</div>
+  </footer>
+</Base>

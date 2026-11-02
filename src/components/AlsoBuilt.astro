@@ -1,0 +1,39 @@
+---
+import type { AlsoBuilt } from "../data/site";
+import Facts from "./Facts.astro";
+
+interface Props {
+  items: AlsoBuilt[];
+}
+const { items } = Astro.props;
+---
+
+<div class="grid gap-6 md:grid-cols-2">
+  {
+    items.map((item) => (
+      <article
+        id={item.id}
+        data-title={item.title}
+        class="card rounded-2xl border border-line bg-paper-2 p-6"
+      >
+        <h3 class="display text-2xl">
+          {item.title}
+          {
+            item.status && (
+              <span class="eyebrow ml-2 rounded-full bg-accent-soft px-2 py-0.5 align-middle normal-case tracking-normal">
+                {item.status}
+              </span>
+            )
+          }
+        </h3>
+        <p class="mt-3 text-muted">{item.summary}</p>
+        <Facts facts={item.facts} />
+        {item.link && (
+          <a href={item.link.href} class="mt-4 inline-block underline hover:text-accent" rel="noopener" target="_blank">
+            {item.link.label} &#8599;
+          </a>
+        )}
+      </article>
+    ))
+  }
+</div>

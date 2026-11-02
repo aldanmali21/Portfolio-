@@ -1,0 +1,105 @@
+---
+import { profile, currently, needs } from "../data/site";
+import Todo from "./Todo.astro";
+---
+
+<section id="top" class="wrap pb-14 pt-14 sm:pb-20 sm:pt-24">
+  <p
+    class="mb-6 inline-flex items-center gap-2 rounded-full border border-line px-3 py-1 text-sm text-muted"
+  >
+    <span class="h-2 w-2 rounded-full bg-accent" aria-hidden="true"></span>
+    {profile.availability}
+  </p>
+
+  <h1 class="display max-w-3xl text-5xl sm:text-7xl">{profile.headline}</h1>
+  <p class="mt-6 max-w-2xl text-lg text-muted sm:text-xl">{profile.subline}</p>
+
+  <div class="mt-8 flex flex-wrap gap-3">
+    <a href={profile.whatsapp} class="btn btn-primary">Message me on WhatsApp</a>
+    <a href={`mailto:${profile.email}`} class="btn btn-ghost">Email me</a>
+  </div>
+
+  <p class="mt-6 text-sm text-muted">
+    {currently.text}{" "}
+    {
+      currently.link ? (
+        <a href={currently.link.href} class="underline hover:text-accent">
+          {currently.link.label}
+        </a>
+      ) : (
+        <Todo note="Afritam link" />
+      )
+    }
+  </p>
+
+  <div id="needs" class="mt-12 js-only" hidden>
+    <p class="eyebrow mb-3">What do you need built?</p>
+    <div class="flex flex-wrap gap-2" role="group" aria-label="What do you need built?">
+      {
+        needs.map((n) => (
+          <button
+            type="button"
+            class="chip"
+            aria-pressed="false"
+            data-need={n.id}
+            data-pitch={n.pitch}
+            data-targets={n.targets.join(",")}
+          >
+            {n.label}
+          </button>
+        ))
+      }
+    </div>
+    <div
+      id="need-result"
+      class="mt-4 max-w-2xl rounded-xl bg-accent-soft p-4 text-sm"
+      aria-live="polite"
+      hidden
+    >
+      <p id="need-pitch"></p>
+      <p id="need-links" class="mt-2 font-semibold"></p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.getElementById("needs");
+  if (root) {
+    root.hidden = false;
+    const chips = Array.from(root.querySelectorAll<HTMLButtonElement>(".chip"));
+    const result = document.getElementById("need-result")!;
+    const pitch = document.getElementById("need-pitch")!;
+    const links = document.getElementById("need-links")!;
+
+    const clear = () => {
+      document.querySelectorAll(".is-match").forEach((el) => el.classList.remove("is-match"));
+    };
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const wasOn = chip.getAttribute("aria-pressed") === "true";
+        chips.forEach((c) => c.setAttribute("aria-pressed", "false"));
+        clear();
+        if (wasOn) {
+          result.hidden = true;
+          return;
+        }
+        chip.setAttribute("aria-pressed", "true");
+        pitch.textContent = chip.dataset.pitch ?? "";
+        links.replaceChildren();
+        (chip.dataset.targets ?? "").split(",").forEach((id, i) => {
+          const target = document.getElementById(id);
+          if (!target) return;
+          target.classList.add("is-match");
+          const a = document.createElement("a");
+          a.href = `#${id}`;
+          a.className = "underline";
+          a.textContent = `See ${target.dataset.title ?? id} →`;
+          if (i > 0) links.append("  ·  ");
+          links.append(a);
+        });
+        result.hidden = false;
+      });
+    });
+  }
+</script>
