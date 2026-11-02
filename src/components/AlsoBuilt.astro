@@ -14,7 +14,8 @@ const { items } = Astro.props;
       <article
         id={item.id}
         data-title={item.title}
-        class="card rounded-2xl border border-line bg-paper-2 p-6"
+        data-brand={item.id}
+        class="card rounded-2xl p-6"
       >
         <h3 class="display text-2xl">
           {item.title}

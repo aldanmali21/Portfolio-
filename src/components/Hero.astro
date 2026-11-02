@@ -71,8 +71,10 @@ import Todo from "./Todo.astro";
     const pitch = document.getElementById("need-pitch")!;
     const links = document.getElementById("need-links")!;
 
+    const hero = document.getElementById("top")!;
     const clear = () => {
       document.querySelectorAll(".is-match").forEach((el) => el.classList.remove("is-match"));
+      hero.removeAttribute("data-brand");
     };
 
     chips.forEach((chip) => {
@@ -85,6 +87,8 @@ import Todo from "./Todo.astro";
           return;
         }
         chip.setAttribute("aria-pressed", "true");
+        const first = (chip.dataset.targets ?? "").split(",")[0];
+        if (first) hero.setAttribute("data-brand", first);
         pitch.textContent = chip.dataset.pitch ?? "";
         links.replaceChildren();
         (chip.dataset.targets ?? "").split(",").forEach((id, i) => {

@@ -27,3 +27,7 @@ _Avoid_: Other projects, archive
 **Currently strip**:
 The short line near the top naming the work in progress right now.
 _Avoid_: Banner, status bar
+
+**Brand theme**:
+The colours and backdrop motif a project's section takes from that project's own brand.
+_Avoid_: Skin, template, style

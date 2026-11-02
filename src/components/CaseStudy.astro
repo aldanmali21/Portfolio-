@@ -11,14 +11,11 @@ const { study, index } = Astro.props;
 const flip = index % 2 === 1;
 ---
 
-<article
-  id={study.id}
-  data-title={study.title}
-  class="case grid items-center gap-10 py-14 md:grid-cols-2 md:gap-16 md:py-20"
->
+<article id={study.id} data-title={study.title} data-brand={study.id} class="case">
+<div class="wrap grid items-center gap-10 py-14 md:grid-cols-2 md:gap-16 md:py-24">
   <div class:list={[flip && "md:order-2"]}>
     <p class="eyebrow">
-      {study.kicker}
+      <span class="brand-dot" aria-hidden="true"></span>{study.kicker}
       {
         study.status && (
           <span class="ml-2 rounded-full bg-accent-soft px-2 py-0.5 normal-case tracking-normal">
@@ -48,7 +45,8 @@ const flip = index % 2 === 1;
       )
     }
   </div>
-  <div class:list={[flip && "md:order-1"]}>
+  <div class:list={["media", flip && "md:order-1"]}>
     <Frame images={study.images} />
   </div>
+</div>
 </article>

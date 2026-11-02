@@ -26,9 +26,9 @@ const year = new Date().getFullYear();
 
     <section id="work" class="border-t border-line">
       <div class="wrap">
-        <p class="eyebrow pt-14">Selected work</p>
-        {caseStudies.map((study, i) => <CaseStudy study={study} index={i} />)}
+        <p class="eyebrow pt-14 pb-8">Selected work</p>
       </div>
+      {caseStudies.map((study, i) => <CaseStudy study={study} index={i} />)}
     </section>
 
     <section id="also" class="border-t border-line bg-paper-2/40">

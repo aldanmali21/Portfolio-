@@ -214,17 +214,176 @@ body {
   color: var(--accent-ink);
 }
 
-.case.is-match {
-  background: var(--accent-soft);
-  padding-inline: 1.25rem;
-}
-.case.is-match,
-.card.is-match {
-  outline: 2px solid var(--accent);
-  outline-offset: -6px;
-  border-radius: 1.25rem;
+
+/* ------------------------------------------------------------------ */
+/* Brand themes: each project section borrows its own project's brand. */
+/* Setting --accent* re-tints every accent-coloured element inside.    */
+/* light-dark() picks the right value for the current theme.           */
+/* ------------------------------------------------------------------ */
+[data-brand] {
+  --accent: var(--b);
+  --accent-ink: var(--b-ink);
+  --accent-soft: var(--b-soft);
 }
 
+/* Farmarq: terracotta */
+[data-brand="farmarq"] {
+  --b: light-dark(#8f3d22, #e58b63);
+  --b-ink: light-dark(#ffffff, #2a0f05);
+  --b-soft: light-dark(#efd3c2, #3a2218);
+  --b-bg: light-dark(#f8ebe1, #231510);
+}
+/* Kampala Dermatology: plum */
+[data-brand="kampala-dermatology"] {
+  --b: light-dark(#5b2a6b, #c79bdb);
+  --b-ink: light-dark(#ffffff, #210a2b);
+  --b-soft: light-dark(#e6d6ec, #2e1c38);
+  --b-bg: light-dark(#f5eef8, #1c1222);
+}
+/* Real Estate AI Assistant: crimson (placeholder until a brand colour is chosen) */
+[data-brand="real-estate-ai"] {
+  --b: light-dark(#b0344f, #f08aa0);
+  --b-ink: light-dark(#ffffff, #33060f);
+  --b-soft: light-dark(#f6d5dc, #3a1721);
+  --b-bg: light-dark(#fcf0f2, #22121a);
+}
+/* Akalimo: violet */
+[data-brand="akalimo"] {
+  --b: light-dark(#6d3bd2, #b79cf5);
+  --b-ink: light-dark(#ffffff, #1a0b3d);
+  --b-soft: light-dark(#e0d5f8, #2a1f45);
+  --b-bg: light-dark(#f3effd, #181226);
+}
+/* BMK Farm Management System: blue */
+[data-brand="bmk"] {
+  --b: light-dark(#1f5fbf, #7aa9f0);
+  --b-ink: light-dark(#ffffff, #071a38);
+  --b-soft: light-dark(#d3e2f7, #17263d);
+  --b-bg: light-dark(#ebf2fc, #0f1826);
+}
+/* Pearlworth Foundation School: green */
+[data-brand="pearlworth"] {
+  --b: light-dark(#2e7d32, #7cc97f);
+  --b-ink: light-dark(#ffffff, #08200a);
+  --b-soft: light-dark(#d4e8d2, #182a19);
+  --b-bg: light-dark(#ecf6eb, #0f1a10);
+}
+
+/* Full-bleed band for each case study. */
+.case {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  background: var(--b-bg);
+  border-top: 1px solid var(--accent-soft);
+}
+.case.is-match .wrap {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+  border-radius: 1.5rem;
+}
+.brand-dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.5rem;
+  border-radius: 999px;
+  background: var(--accent);
+  vertical-align: baseline;
+}
+.case .frame {
+  box-shadow: 0 28px 55px -22px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+/* A different backdrop motif behind each project's screenshots. */
+.media {
+  position: relative;
+}
+.media::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+/* Farmarq: growth rings */
+[data-brand="farmarq"] .media::before {
+  inset: -3rem;
+  background: repeating-radial-gradient(
+    circle at center,
+    transparent 0 20px,
+    color-mix(in srgb, var(--accent) 26%, transparent) 20px 21px
+  );
+  mask-image: radial-gradient(circle, #000 25%, transparent 70%);
+}
+/* Kampala Dermatology: a soft arch, like a clinic window */
+[data-brand="kampala-dermatology"] .media::before {
+  inset: -1.5rem 12% -1.5rem;
+  border-radius: 999px 999px 1.5rem 1.5rem;
+  background: var(--accent-soft);
+}
+/* Real Estate AI: blueprint grid */
+[data-brand="real-estate-ai"] .media::before {
+  inset: -2rem;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--accent) 24%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 24%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse, #000 35%, transparent 72%);
+}
+/* Akalimo: map-style dot grid */
+[data-brand="akalimo"] .media::before {
+  inset: -2rem;
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--accent) 50%, transparent) 1.6px,
+    transparent 1.7px
+  );
+  background-size: 20px 20px;
+  mask-image: radial-gradient(ellipse, #000 35%, transparent 75%);
+}
+
+/* Compact "Also built" cards carry their brand too. */
+.card {
+  position: relative;
+  overflow: hidden;
+  background: var(--b-bg);
+  border: 1px solid var(--accent-soft);
+  border-top: 5px solid var(--accent);
+}
+.card.is-match {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.card {
+  isolation: isolate;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, transparent 35%, #000);
+}
+/* BMK: ledger lines, like a farm record book */
+[data-brand="bmk"].card::before {
+  background-image: repeating-linear-gradient(
+    transparent 0 27px,
+    color-mix(in srgb, var(--accent) 22%, transparent) 27px 28px
+  );
+}
+/* Pearlworth: exercise-book squares */
+[data-brand="pearlworth"].card::before {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--accent) 20%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 20%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.card .btn,
+.card a {
+  color: var(--accent);
+}
+
+/* Light/dark toggle in the header. */
 .theme-toggle {
   display: inline-grid;
   place-items: center;
@@ -253,5 +412,31 @@ body {
   }
   :root:not([data-theme="light"]) .theme-toggle .icon-moon {
     display: none;
+  }
+}
+
+/* Keep placeholder labels inside narrow frames (three across on phones). */
+.frame-placeholder {
+  padding: 0.4rem;
+  font-size: 0.75rem;
+}
+.frame-placeholder .todo {
+  display: block;
+  white-space: normal;
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.5rem;
+}
+@media (min-width: 640px) {
+  .frame-placeholder {
+    padding: 1rem;
+    font-size: 0.85rem;
+  }
+  .frame-placeholder .todo {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 0.05rem 0.5rem;
+    border-radius: 999px;
   }
 }
