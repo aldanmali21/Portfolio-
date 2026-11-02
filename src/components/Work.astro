@@ -46,6 +46,15 @@ const n = projects.length;
     const bgs = Array.from(work.querySelectorAll<HTMLElement>(".bg"));
     const device = work.querySelector<HTMLElement>("[data-device]")!;
     const laptopEl = device.querySelector<HTMLElement>(".laptop")!;
+    const lidEl = device.querySelector<HTMLElement>(".laptop-lid")!;
+    const bezelEl = device.querySelector<HTMLElement>(".laptop-bezel")!;
+    const baseEl = device.querySelector<HTMLElement>(".laptop-base")!;
+    const lapScreenEl = device.querySelector<HTMLElement>(".laptop-screen")!;
+    const phoneScreenEl = device.querySelector<HTMLElement>(".phone-screen")!;
+    // What sits on the laptop's coloured desktop (the address bar and the screenshots).
+    const lapContentEls = Array.from(
+      device.querySelectorAll<HTMLElement>(".chrome, .lap-shot, .lap-slide .desk-shot"),
+    );
     const phonesEl = device.querySelector<HTMLElement>("[data-phone]")!;
     const stripEls = Array.from(device.querySelectorAll<HTMLElement>("[data-strip]"));
     const urlEls = Array.from(device.querySelectorAll<HTMLElement>("[data-url]"));
@@ -80,37 +89,103 @@ const n = projects.length;
     //   f: 0 = phone, 1 = laptop. Right after a project is centred the device changes to
     //      the other form (project 1: phone to laptop, project 2: laptop to phone, ...).
     //   c: which project's screen is showing (a fraction while it slides to the next).
-    const MORPH = 0.45;
+    const MORPH = 0.5;
     const N = panels.length;
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    // Sizes of the two devices, measured from the page (layout size ignores transforms).
+    let geo = { sw: 1, sh: 1, lw: 1, lh: 1, lcx: 0, lcy: 0, pw: 1, ph: 1 };
+    function measure() {
+      geo = {
+        sw: device.offsetWidth,
+        sh: device.offsetHeight,
+        lw: laptopEl.offsetWidth,
+        lh: laptopEl.offsetHeight,
+        lcx: laptopEl.offsetLeft + laptopEl.offsetWidth / 2,
+        lcy: laptopEl.offsetTop + laptopEl.offsetHeight / 2,
+        pw: phonesEl.offsetWidth,
+        ph: phonesEl.offsetHeight,
+      };
+    }
+
     function deviceState(u: number) {
       const U = clamp(u, 0, N - 1);
       const k = Math.floor(U);
       const w = clamp((U - k) / MORPH, 0, 1);
       const f = k % 2 === 0 ? w : 1 - w;
       const c = k + smooth(clamp((U - k - MORPH) / (1 - MORPH), 0, 1));
-      // A true crossfade: as one device fades out the other fades in over the same
-      // stretch of scroll, so they overlap and trade places smoothly (and the same
-      // in reverse when the laptop turns back into a phone).
-      const fl = smooth(f);
-      const fp = 1 - fl;
+
+      // The laptop moulds into the phone (and the phone into the laptop): both are scaled
+      // to follow ONE outline that goes from the laptop's wide rectangle to the phone's
+      // tall one, so the shape itself changes instead of one device fading for another.
+      const g = smooth(f); // 0 = phone shape, 1 = laptop shape
+      const { sw, sh, lw, lh, lcx, lcy, pw, ph } = geo;
+      const W = lerp(pw, lw, g);
+      const H = lerp(ph, lh, g);
+      const cx = lerp(sw / 2, lcx, g);
+      const cy = lerp(sh / 2, lcy, g);
+      const slx = W / lw; // laptop scale
+      const sly = H / lh;
+      const spx = W / pw; // phone scale
+      const spy = H / ph;
+
+      // Corner radius: follow the phone's rounded corners through the change, then settle
+      // on the laptop's tighter ones. The scaling stretches corners, so they are divided
+      // back out to keep the outline's corners round rather than oval.
+      const rl = sw * 0.024; // laptop lid radius (2.4cqw)
+      const rim = sw * 0.003; // metal rim around the bezel
+      const rp = pw * 0.15; // phone body radius (15cqw of the phone)
+      const h = smooth(clamp((g - 0.5) / 0.5, 0, 1));
+      const vx = lerp(rp, rl, h);
+      const vy = lerp(rp, rl, h);
+
+      // The shells swap while their outlines coincide. The screens dissolve earlier than the
+      // bodies change shape, so a stretched screenshot is never on show: the body moulds
+      // first and the new screen lights up once it is nearly there.
+      const ol = smooth(clamp((g - 0.15) / 0.25, 0, 1)); // laptop body in
+      const op = 1 - smooth(clamp((g - 0.22) / 0.28, 0, 1)); // phone body out
+      const ps = 1 - smooth(clamp((g - 0.04) / 0.26, 0, 1)); // phone screen goes first
+      const ls = smooth(clamp((g - 0.3) / 0.28, 0, 1)); // the laptop's coloured desktop
+      const lc = smooth(clamp((g - 0.6) / 0.3, 0, 1)); // then what is on it
       return {
-        laptop: { opacity: fl, transform: `scale(${0.92 + 0.08 * fl})` },
-        phones: { opacity: fp, transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * fp})` },
+        laptop: {
+          opacity: ol,
+          transform: `translate(${cx - lcx}px, ${cy - lcy}px) scale(${slx}, ${sly})`,
+        },
+        lid: { borderRadius: `${vx / slx}px / ${vy / sly}px` },
+        bezel: { borderRadius: `${Math.max(0, vx - rim) / slx}px / ${Math.max(0, vy - rim) / sly}px` },
+        base: { opacity: smooth(clamp((g - 0.7) / 0.3, 0, 1)) },
+        lapScreen: { opacity: ls },
+        lapContent: { opacity: lc },
+        phoneScreen: { opacity: ps },
+        phones: {
+          opacity: op,
+          transform: `translate(-50%, -50%) translate(${cx - sw / 2}px, ${cy - sh / 2}px) scale(${spx}, ${spy})`,
+        },
         strip: { transform: `translate3d(${(-c * 100) / N}%,0,0)` },
         urls: urlEls.map((_, i) => ({ opacity: clamp(1 - Math.abs(c - i) * 1.6, 0, 1) })),
       };
     }
+    type DeviceState = ReturnType<typeof deviceState>;
+    const deviceTargets: { el: HTMLElement; pick: (st: DeviceState) => Keyframe }[] = [
+      { el: laptopEl, pick: (st) => st.laptop },
+      { el: lidEl, pick: (st) => st.lid },
+      { el: bezelEl, pick: (st) => st.bezel },
+      { el: baseEl, pick: (st) => st.base },
+      { el: lapScreenEl, pick: (st) => st.lapScreen },
+      { el: phoneScreenEl, pick: (st) => st.phoneScreen },
+      ...lapContentEls.map((el) => ({ el, pick: (st: DeviceState) => st.lapContent as Keyframe })),
+      { el: phonesEl, pick: (st) => st.phones },
+      ...stripEls.map((el) => ({ el, pick: (st: DeviceState) => st.strip as Keyframe })),
+      ...urlEls.map((el, i) => ({ el, pick: (st: DeviceState) => st.urls[i] as Keyframe })),
+    ];
     function applyDevice(u: number) {
       const st = deviceState(u);
-      Object.assign(laptopEl.style, { opacity: String(st.laptop.opacity), transform: st.laptop.transform });
-      Object.assign(phonesEl.style, { opacity: String(st.phones.opacity), transform: st.phones.transform });
-      stripEls.forEach((el) => (el.style.transform = st.strip.transform));
-      urlEls.forEach((el, i) => (el.style.opacity = String(st.urls[i].opacity)));
+      deviceTargets.forEach(({ el, pick }) => Object.assign(el.style, pick(st)));
     }
     function clearDevice() {
-      [laptopEl, phonesEl, ...stripEls, ...urlEls].forEach((el) => {
-        el.style.opacity = "";
-        el.style.transform = "";
+      deviceTargets.forEach(({ el, pick }) => {
+        Object.keys(pick(deviceState(0))).forEach((k) => ((el.style as any)[k] = ""));
       });
     }
 
@@ -122,6 +197,7 @@ const n = projects.length;
     }
     function buildDeviceAnims(start: number, seg: number) {
       cancelDeviceAnims();
+      measure();
       const maxScroll = document.documentElement.scrollHeight - innerHeight;
       if (maxScroll <= 0) return;
       const STEPS = 40;
@@ -131,10 +207,10 @@ const n = projects.length;
         const u = i / STEPS;
         return { offset: clamp((start + u * seg) / maxScroll, 0, 1), st: deviceState(u) };
       });
-      const frames = (pick: (st: ReturnType<typeof deviceState>) => Keyframe) => {
+      const frames = (pick: (st: DeviceState) => Keyframe) => {
         const out: Keyframe[] = [];
         let prev = 0;
-        const push = (offset: number, st: ReturnType<typeof deviceState>) => {
+        const push = (offset: number, st: DeviceState) => {
           prev = Math.max(prev, offset);
           out.push({ offset: prev, ...pick(st) });
         };
@@ -143,12 +219,9 @@ const n = projects.length;
         push(1, samples[samples.length - 1].st);
         return out;
       };
-      const run = (el: HTMLElement, pick: (st: ReturnType<typeof deviceState>) => Keyframe) =>
-        deviceAnims.push(el.animate(frames(pick), { timeline: tl, fill: "both", easing: "linear" } as any));
-      run(laptopEl, (st) => st.laptop);
-      run(phonesEl, (st) => st.phones);
-      stripEls.forEach((el) => run(el, (st) => st.strip));
-      urlEls.forEach((el, i) => run(el, (st) => st.urls[i]));
+      deviceTargets.forEach(({ el, pick }) =>
+        deviceAnims.push(el.animate(frames(pick), { timeline: tl, fill: "both", easing: "linear" } as any)),
+      );
     }
 
     // Tell the stylesheet where each animation starts and ends, in scroll pixels.
@@ -230,6 +303,7 @@ const n = projects.length;
     const ro = new ResizeObserver(relayout);
 
     const onResize = () => {
+      if (!timeline) measure();
       schedule();
       relayout();
     };
@@ -239,6 +313,7 @@ const n = projects.length;
       panels.forEach((el) => io.unobserve(el));
       work!.classList.add("is-h");
       timeline = hasTimeline;
+      measure();
       if (timeline) {
         layoutTimeline();
         work!.classList.add("tl");

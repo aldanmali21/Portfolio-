@@ -1344,3 +1344,11 @@ body {
     text-align: center;
   }
 }
+
+/* The shared laptop and phone are reshaped by script, so they pivot about their centres. */
+.device .laptop {
+  transform-origin: 50% 50%;
+}
+.device .laptop::after {
+  display: none;
+}
