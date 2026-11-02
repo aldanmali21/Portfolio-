@@ -256,9 +256,19 @@ export const experience = [
 ];
 
 export const stack = [
-  { label: "Languages", items: "JavaScript, TypeScript, PHP" },
-  { label: "Front end", items: "React, React Native, Tailwind" },
-  { label: "Back end and data", items: "Node.js, Supabase, Firebase, PostgreSQL, MySQL, MongoDB" },
+  {
+    label: "AI tools",
+    items: "Claude Code, ChatGPT Codex, open-source models through Command Code",
+  },
+  { label: "Languages", items: "JavaScript, TypeScript, Python, PHP" },
+  {
+    label: "Frameworks",
+    items: "Next.js, React, React Native, Astro, Node.js, Tailwind",
+  },
+  {
+    label: "Back end and data",
+    items: "Supabase, Convex, Firebase, PostgreSQL, MySQL, MongoDB",
+  },
   { label: "Shipping", items: "Git, Docker, CI/CD, Kubernetes, DigitalOcean" },
   { label: "Automation", items: "AI workflow automation" },
 ];

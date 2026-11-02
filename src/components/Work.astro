@@ -53,7 +53,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
       }
     </div>
     <div class="rail" data-rail>
-      <span class="rail-count" data-rail-count>Selected work</span>
+      <span class="rail-count"><span data-rail-num>01 / 06</span><span class="rail-title" data-rail-title></span></span>
       <div class="rail-ticks">
         {
           projects.map((p, i) => (
@@ -74,12 +74,13 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
     const stage = work.querySelector<HTMLElement>(".stage")!;
     const track = work.querySelector<HTMLElement>(".track")!;
     const rail = work.querySelector<HTMLElement>("[data-rail]")!;
-    const count = work.querySelector<HTMLElement>("[data-rail-count]")!;
+    const railNum = work.querySelector<HTMLElement>("[data-rail-num]")!;
+    const railTitle = work.querySelector<HTMLElement>("[data-rail-title]")!;
     const panels = Array.from(work.querySelectorAll<HTMLElement>(".panel"));
     const ticks = Array.from(work.querySelectorAll<HTMLButtonElement>("[data-go]"));
     const header = document.querySelector("header");
     const mq = window.matchMedia(
-      "(min-width: 900px) and (min-height: 540px) and (prefers-reduced-motion: no-preference)",
+      "(min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference), (max-width: 899px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)",
     );
 
     const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
@@ -102,17 +103,20 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
       track.style.transform = `translate3d(${-p * maxX}px,0,0)`;
       // The first project morphs as the section scrolls into view; the rest as they slide in.
       const entry = smooth(clamp(1 - (rect.top - hh) / (innerHeight * 0.6), 0, 1));
+      // ...and the last one folds back into a phone as the section scrolls away below it.
+      const exit = smooth(clamp((hh + stage.offsetHeight - rect.bottom) / (innerHeight * 0.6), 0, 1));
       panels.forEach((el, i) => {
         const d = (i * vw - p * maxX) / vw; // 0 when centred, +1 one screen to the right
-        const mh = d <= 0 ? 1 : 1 - smooth(clamp(d / 0.85, 0, 1));
-        el.style.setProperty("--m", String(Math.min(mh, entry)));
+        const mh = 1 - smooth(clamp(Math.abs(d) / 0.85, 0, 1));
+        el.style.setProperty("--m", String(Math.min(mh, entry, 1 - exit)));
         el.style.setProperty("--d", String(clamp(d, -1, 1)));
       });
       const idx = Math.round(p * (panels.length - 1));
       if (idx !== active) {
         active = idx;
         ticks.forEach((t, i) => t.setAttribute("aria-current", String(i === idx)));
-        count.textContent = `${pad(idx)} / ${pad(panels.length - 1)}  ${panels[idx].dataset.title}`;
+        railNum.textContent = `${pad(idx)} / ${pad(panels.length - 1)}`;
+        railTitle.textContent = panels[idx].dataset.title ?? "";
         rail.setAttribute("data-brand", panels[idx].id);
       }
     }
@@ -178,6 +182,29 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
       e.preventDefault();
       goTo(i);
     });
+
+    // On touch screens a sideways swipe moves to the next or previous project.
+    let sx = 0;
+    let sy = 0;
+    stage.addEventListener(
+      "touchstart",
+      (e) => {
+        sx = e.touches[0].clientX;
+        sy = e.touches[0].clientY;
+      },
+      { passive: true },
+    );
+    stage.addEventListener(
+      "touchend",
+      (e) => {
+        if (!pinned) return;
+        const dx = e.changedTouches[0].clientX - sx;
+        const dy = e.changedTouches[0].clientY - sy;
+        if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+        goTo(clamp(active + (dx < 0 ? 1 : -1), 0, panels.length - 1));
+      },
+      { passive: true },
+    );
 
     // Tabbing into an off-screen slide brings it into view.
     panels.forEach((el, i) =>
