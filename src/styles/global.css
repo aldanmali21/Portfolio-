@@ -1315,3 +1315,32 @@ body {
     top: 0.3rem;
   }
 }
+
+/* ---------------------------------------------------------------- */
+/* On phones the project text is centred under the device.           */
+/* ---------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .copy {
+    text-align: center;
+  }
+  .copy .summary,
+  .copy .points {
+    margin-inline: auto;
+  }
+  /* The dash sits in front of each point instead of hanging off the left edge. */
+  .copy .points li {
+    padding-left: 0;
+  }
+  .copy .points li::before {
+    position: static;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.55rem;
+  }
+  .copy .facts {
+    justify-content: center;
+  }
+  .copy .facts > div {
+    text-align: center;
+  }
+}
