@@ -7,8 +7,9 @@ interface Props {
 }
 const { study } = Astro.props;
 const desktop = study.device === "desktop";
-const imgs = study.images;
-const first = imgs[0];
+const first = study.images[0];
+// Desktop projects show their phone view while the device is a phone.
+const phoneImgs = desktop ? (study.mobile ?? [{ placeholder: "Mobile view" }]) : study.images;
 ---
 
 <div class:list={["scene", desktop && "scene-desktop"]}>
@@ -39,17 +40,13 @@ const first = imgs[0];
     </div>
     <div class="laptop-base"></div>
   </div>
-  {
-    !desktop && (
-      <div class:list={["phones", imgs.length > 1 && "multi"]}>
-        {imgs.map((img) =>
-          "src" in img ? (
-            <Phone src={img.src} alt={img.alt} />
-          ) : (
-            <Phone label={img.placeholder} />
-          ),
-        )}
-      </div>
-    )
-  }
+  <div class:list={["phones", phoneImgs.length > 1 && "multi"]} aria-hidden={desktop ? "true" : undefined}>
+    {phoneImgs.map((img) =>
+      "src" in img ? (
+        <Phone src={img.src} alt={img.alt} />
+      ) : (
+        <Phone label={img.placeholder} />
+      ),
+    )}
+  </div>
 </div>

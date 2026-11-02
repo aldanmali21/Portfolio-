@@ -549,9 +549,11 @@ body {
   transform: scale(calc(0.78 + 0.22 * var(--m)));
   transform-origin: 50% 70%;
 }
-.scene-desktop .laptop {
-  opacity: 1;
-  transform: none;
+/* Desktop projects have no phone screenshot to keep inside the laptop: their phone view
+   simply gives way to the laptop. */
+.scene-desktop .phones {
+  opacity: calc(1 - var(--m));
+  transform: translate(-50%, -50%) scale(calc(1 - 0.2 * var(--m)));
 }
 /* Soft shadow where the laptop meets the table. */
 .laptop::after {
@@ -1014,6 +1016,10 @@ body {
 /* Smooth mode: the browser runs the slide itself, in step with the  */
 /* scroll, so it never trails your finger. Needs scroll-linked       */
 /* animations; other browsers use the script-driven fallback.        */
+/*                                                                   */
+/* The device changes form in a cycle: phone, laptop, phone, laptop. */
+/* Project 1 turns from phone to laptop as you scroll away; project  */
+/* 2 arrives as that laptop, then turns back into a phone; and so on. */
 /* ---------------------------------------------------------------- */
 @keyframes track-slide {
   to {
@@ -1021,83 +1027,64 @@ body {
     transform: translate3d(calc(-100% * (var(--n) - 1)), 0, 0);
   }
 }
-@keyframes morph-laptop {
-  0%,
-  100% {
+@keyframes to-laptop {
+  from {
     opacity: 0;
     transform: scale(0.78);
   }
-  50% {
+  to {
     opacity: 1;
     transform: scale(1);
   }
 }
-@keyframes morph-phones {
-  0%,
-  100% {
+@keyframes phones-into-laptop {
+  from {
     transform: translate(-50%, -50%) scale(1);
   }
-  50% {
+  to {
     transform: translate(-50%, calc(-50% - 3%)) scale(0.6);
   }
 }
-@keyframes morph-phones-multi {
-  0%,
-  100% {
+@keyframes phones-into-laptop-multi {
+  from {
     transform: translate(-50%, -50%) scale(1);
   }
-  50% {
+  to {
     transform: translate(-50%, calc(-50% - 2%)) scale(0.84);
   }
 }
-/* The screens stay locked to one spot on the display while the track slides past:
-   the scene is pushed back by exactly the distance the track moves (100cqw is the
-   stage width), plus a little drift so the outgoing and incoming screens pass each other. */
-@keyframes merge-move {
+@keyframes phones-away {
   from {
-    translate: calc(6cqw - 100cqw) 0;
-  }
-  to {
-    translate: calc(100cqw - 6cqw) 0;
-  }
-}
-@keyframes merge-move-copy {
-  from {
-    translate: calc(12cqw - 100cqw) 0;
-  }
-  to {
-    translate: calc(100cqw - 12cqw) 0;
-  }
-}
-@keyframes merge-move-num {
-  from {
-    translate: calc(18cqw - 100cqw) 0;
-  }
-  to {
-    translate: calc(100cqw - 18cqw) 0;
-  }
-}
-/* ...while they dissolve into one another. */
-@keyframes merge-fade {
-  0%,
-  100% {
-    opacity: 0;
-    scale: 0.94;
-  }
-  50% {
     opacity: 1;
-    scale: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
   }
 }
-@keyframes copy-fade {
-  0%,
-  27%,
-  73%,
-  100% {
-    opacity: 0;
+@keyframes drift-scene {
+  from {
+    translate: -4.5rem 0;
   }
-  50% {
-    opacity: 1;
+  to {
+    translate: 4.5rem 0;
+  }
+}
+@keyframes drift-copy {
+  from {
+    translate: 2.5rem 0;
+  }
+  to {
+    translate: -2.5rem 0;
+  }
+}
+@keyframes drift-num {
+  from {
+    translate: 6rem 0;
+  }
+  to {
+    translate: -6rem 0;
   }
 }
 @keyframes bg-in {
@@ -1120,16 +1107,16 @@ body {
     animation-range-end: var(--e);
   }
   .work.tl .panel .laptop {
-    animation-name: morph-laptop;
-  }
-  .work.tl .panel .scene-desktop .laptop {
-    animation-name: none;
+    animation-name: to-laptop;
   }
   .work.tl .panel .phones {
-    animation-name: morph-phones;
+    animation-name: phones-into-laptop;
   }
   .work.tl .panel .phones.multi {
-    animation-name: morph-phones-multi;
+    animation-name: phones-into-laptop-multi;
+  }
+  .work.tl .panel .scene-desktop .phones {
+    animation-name: phones-away;
   }
   .work.tl .panel .laptop,
   .work.tl .panel .phones {
@@ -1139,30 +1126,28 @@ body {
     animation-range-start: var(--ms);
     animation-range-end: var(--me);
   }
-  /* Two animations on each, so movement stays linear while fades are eased. */
+  /* 2nd and 4th projects arrive as a laptop, so their change plays backwards. */
+  .work.tl .track > .panel:nth-child(even) .laptop,
+  .work.tl .track > .panel:nth-child(even) .phones {
+    animation-direction: reverse;
+  }
   .work.tl .panel .scene {
-    animation-name: merge-move, merge-fade;
-    animation-timing-function: linear, ease-in-out;
-    animation-fill-mode: both, both;
-    animation-timeline: scroll(root block), scroll(root block);
-    animation-range-start: var(--ps), var(--ps);
-    animation-range-end: var(--pe), var(--pe);
+    animation-name: drift-scene;
   }
   .work.tl .panel .copy {
-    animation-name: merge-move-copy, copy-fade;
-    animation-timing-function: linear, ease-in-out;
-    animation-fill-mode: both, both;
-    animation-timeline: scroll(root block), scroll(root block);
-    animation-range-start: var(--ps), var(--ps);
-    animation-range-end: var(--pe), var(--pe);
+    animation-name: drift-copy;
   }
   .work.tl .panel .panel-num {
-    animation-name: merge-move-num, copy-fade;
-    animation-timing-function: linear, ease-in-out;
-    animation-fill-mode: both, both;
-    animation-timeline: scroll(root block), scroll(root block);
-    animation-range-start: var(--ps), var(--ps);
-    animation-range-end: var(--pe), var(--pe);
+    animation-name: drift-num;
+  }
+  .work.tl .panel .scene,
+  .work.tl .panel .copy,
+  .work.tl .panel .panel-num {
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(root block);
+    animation-range-start: var(--ps);
+    animation-range-end: var(--pe);
   }
   /* Each background fades in over the one before it. */
   .work.tl .bg:not(:first-child) {
@@ -1237,7 +1222,8 @@ body {
 }
 
 /* ---------------------------------------------------------------- */
-/* Join: one continuous background, screens that merge               */
+/* One continuous background that shifts colour from project to      */
+/* project, so there is no hard edge between them.                   */
 /* ---------------------------------------------------------------- */
 .bgs {
   display: none;
@@ -1256,9 +1242,6 @@ body {
 .work.is-h .bg:not(:first-child) {
   opacity: 0;
 }
-.work.is-h .stage {
-  container-type: inline-size;
-}
 .work.is-h .track {
   position: relative;
   z-index: 1;
@@ -1269,18 +1252,4 @@ body {
 }
 .work.is-h .panel + .panel {
   border-left: 0;
-}
-.work.is-h .scene {
-  pointer-events: none;
-  translate: calc(var(--d) * (6cqw - 100cqw)) 0;
-  opacity: var(--so, 1);
-  scale: calc(0.94 + 0.06 * var(--so, 1));
-}
-.work.is-h .copy {
-  translate: calc(var(--d) * (12cqw - 100cqw)) 0;
-  opacity: var(--co, 1);
-}
-.work.is-h .panel-num {
-  translate: calc(var(--d) * (18cqw - 100cqw)) 0;
-  opacity: var(--co, 1);
 }

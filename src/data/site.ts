@@ -23,6 +23,8 @@ export interface CaseStudy {
   device: "phone" | "desktop";
   /** Real screenshots in /public/images, or placeholder labels when not yet supplied. */
   images: { src: string; alt: string }[] | { placeholder: string }[];
+  /** For "desktop" projects: the phone view shown while the device is a phone. */
+  mobile?: { src: string; alt: string }[] | { placeholder: string }[];
 }
 
 export interface NeedChip {
@@ -168,6 +170,29 @@ export const projects: CaseStudy[] = [
     ],
   },
   {
+    id: "bmk",
+    kicker: "Farm management",
+    title: "BMK Farm Management System",
+    status: "Ongoing",
+    summary:
+      "A farm management system for Bart Magunda Katureebe, former Chief Justice of Uganda.",
+    points: [
+      "Tracks animal health, history and productivity.",
+      "Separate access for administrators, managers and veterinarians.",
+      "Works on a phone for staff out in the field.",
+    ],
+    facts: [
+      { label: "Stack", value: "PHP, MySQL" },
+      { label: "Client", value: "Bart Magunda Katureebe" },
+      { label: "Result", value: null }, // TODO
+    ],
+    link: null,
+    urlLabel: "private client system",
+    device: "desktop",
+    images: [{ placeholder: "Dashboard screenshot" }],
+    mobile: [{ placeholder: "Mobile view" }],
+  },
+  {
     id: "akalimo",
     kicker: "Marketplace",
     title: "Akalimo",
@@ -193,28 +218,6 @@ export const projects: CaseStudy[] = [
       { placeholder: "Compare quotes" },
       { placeholder: "Live tracking" },
     ],
-  },
-  {
-    id: "bmk",
-    kicker: "Farm management",
-    title: "BMK Farm Management System",
-    status: "Ongoing",
-    summary:
-      "A farm management system for Bart Magunda Katureebe, former Chief Justice of Uganda.",
-    points: [
-      "Tracks animal health, history and productivity.",
-      "Separate access for administrators, managers and veterinarians.",
-      "Works on a phone for staff out in the field.",
-    ],
-    facts: [
-      { label: "Stack", value: "PHP, MySQL" },
-      { label: "Client", value: "Bart Magunda Katureebe" },
-      { label: "Result", value: null }, // TODO
-    ],
-    link: null,
-    urlLabel: "private client system",
-    device: "desktop",
-    images: [{ placeholder: "Dashboard screenshot" }],
   },
 ];
 
@@ -243,6 +246,7 @@ export const otherProjects: CaseStudy[] = [
     urlLabel: "pearlworthfoundationschool.com",
     device: "desktop",
     images: [{ placeholder: "Website screenshot" }],
+    mobile: [{ placeholder: "Mobile view" }],
   },
 ];
 

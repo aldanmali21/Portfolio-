@@ -78,8 +78,9 @@ const n = projects.length;
       });
       panels.forEach((el, i) => {
         const c = start + i * seg;
-        el.style.setProperty("--ms", `${Math.max(0, c - 0.85 * seg)}px`);
-        el.style.setProperty("--me", `${c + 0.85 * seg}px`);
+        // The phone/laptop change plays just after a project is centred.
+        el.style.setProperty("--ms", `${c}px`);
+        el.style.setProperty("--me", `${c + 0.35 * seg}px`);
         el.style.setProperty("--ps", `${Math.max(0, c - seg)}px`);
         el.style.setProperty("--pe", `${c + seg}px`);
       });
@@ -102,21 +103,17 @@ const n = projects.length;
       if (!timeline) {
         // Fallback for browsers without scroll-linked animations.
         const vw = stage.clientWidth;
-        const maxX = track.scrollWidth - vw;
+        const maxX = (panels.length - 1) * vw;
         track.style.transform = `translate3d(${-p * maxX}px,0,0)`;
-        const entry = smooth(clamp(1 - (rect.top - hh) / (innerHeight * 0.6), 0, 1));
-        const exit = smooth(clamp((hh + stage.offsetHeight - rect.bottom) / (innerHeight * 0.6), 0, 1));
+        const u = p * (panels.length - 1);
         panels.forEach((el, i) => {
           const d = (i * vw - p * maxX) / vw;
-          const mh = 1 - smooth(clamp(Math.abs(d) / 0.85, 0, 1));
-          el.style.setProperty("--m", String(Math.min(mh, entry, 1 - exit)));
+          // Phone, then laptop, then phone again: each project turns the opposite way
+          // to the one before it, just after it is centred.
+          const t = smooth(clamp((u - i) / 0.35, 0, 1));
+          el.style.setProperty("--m", String(i % 2 === 0 ? t : 1 - t));
           el.style.setProperty("--d", String(clamp(d, -1, 1)));
-          // How "present" this project is: 1 when centred, fading to 0 a screen away.
-          el.style.setProperty("--so", String(smooth(clamp(1 - Math.abs(d), 0, 1))));
-          // Text is only visible near the centre, so two text blocks never overlap.
-          el.style.setProperty("--co", String(smooth(clamp((0.46 - Math.abs(d)) / 0.46, 0, 1))));
         });
-        const u = p * (panels.length - 1);
         bgs.forEach((el, i) => {
           if (i > 0) el.style.opacity = String(smooth(clamp((u - (i - 0.9)) / 0.8, 0, 1)));
         });
@@ -127,8 +124,6 @@ const n = projects.length;
         ticks.forEach((t, i) => t.setAttribute("aria-current", String(i === idx)));
         railNum.textContent = `${pad(idx)} / ${pad(panels.length - 1)}`;
         railTitle.textContent = panels[idx].dataset.title ?? "";
-        // Only the project in view is interactive; the others sit invisibly in the same spot.
-        panels.forEach((el, i) => el.querySelector(".copy")?.toggleAttribute("inert", i !== idx));
         rail.setAttribute("data-brand", panels[idx].id);
       }
     }
@@ -176,7 +171,6 @@ const n = projects.length;
       pinned = false;
       timeline = false;
       work!.classList.remove("is-h", "tl");
-      panels.forEach((el) => el.querySelector(".copy")?.removeAttribute("inert"));
       ro.disconnect();
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", onResize);
@@ -191,8 +185,6 @@ const n = projects.length;
         ["--ms", "--me", "--ps", "--pe"].forEach((v) => el.style.removeProperty(v));
         el.style.setProperty("--m", "0");
         el.style.setProperty("--d", "0");
-        el.style.removeProperty("--so");
-        el.style.removeProperty("--co");
         io.observe(el);
       });
     }
