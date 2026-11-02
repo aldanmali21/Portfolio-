@@ -738,34 +738,6 @@ body {
     0 24px 50px -22px color-mix(in srgb, var(--accent) 60%, transparent),
     inset 0 0 0 0.4cqw rgb(255 255 255 / 0.28);
 }
-.phone .btn {
-  position: absolute;
-  width: 0.9cqw;
-  border-radius: 0.5cqw;
-  background: linear-gradient(90deg, light-dark(#5f5e5a, #1c1e20), light-dark(#aeaca5, #44484c));
-  box-shadow: 0 0 0.4cqw rgb(0 0 0 / 0.45);
-}
-.btn-act {
-  left: -0.8cqw;
-  top: 16cqw;
-  height: 4.5cqw;
-}
-.btn-up {
-  left: -0.8cqw;
-  top: 26cqw;
-  height: 9cqw;
-}
-.btn-down {
-  left: -0.8cqw;
-  top: 38cqw;
-  height: 9cqw;
-}
-.btn-pwr {
-  right: -0.8cqw;
-  top: 32cqw;
-  height: 14cqw;
-  background: linear-gradient(270deg, light-dark(#5f5e5a, #1c1e20), light-dark(#aeaca5, #44484c));
-}
 .phone-bezel {
   padding: 2.2cqw;
   border-radius: 13.5cqw;
