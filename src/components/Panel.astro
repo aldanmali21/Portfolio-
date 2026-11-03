@@ -13,7 +13,7 @@ const num = String(index + 1).padStart(2, "0");
 
 <article
   id={p.id}
-  class:list={["panel", extra && "extra"]}
+  class:list={["panel", extra && "extra", index % 2 === 1 && "flip"]}
   data-brand={p.id}
   data-title={p.title}
   aria-label={p.title}

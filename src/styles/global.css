@@ -379,6 +379,20 @@ body {
     padding-inline: 2rem;
   }
 }
+/* On wide screens the projects alternate sides: the 1st, 3rd, 5th have the write-up on the
+   left and the device on the right; the 2nd and 4th are the other way round. */
+@media (min-width: 900px) {
+  .panel.flip .panel-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+  .panel.flip .copy {
+    order: 2;
+  }
+  .panel.flip .panel-num {
+    right: auto;
+    left: 1.5rem;
+  }
+}
 .panel-num {
   position: absolute;
   z-index: -1;
@@ -1356,97 +1370,48 @@ body {
 }
 
 /* ---------------------------------------------------------------- */
-/* Desktop uses the phone's structure: the number first, then the   */
-/* device with the screenshots, then the project text, centred. The */
-/* sizes are simply larger. One layout at every width.              */
+/* Desktop: the write-up and the device sit side by side. The first, */
+/* third and fifth projects have the write-up on the left; the       */
+/* second and fourth have it on the right (see .flip, and the device */
+/* crossing sides in Work.astro).                                    */
 /* ---------------------------------------------------------------- */
 @media (min-width: 900px) {
-  .panel-grid {
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
-    max-width: 56rem;
-  }
-  .panel .scene,
-  .work.is-h .scene {
-    order: -1;
-  }
   .work.is-h .panel,
   .work.is-h .device-layer {
+    align-items: stretch;
     padding-block: clamp(3.2rem, 10svh, 5.5rem) 4.5rem;
   }
+  .panel-grid {
+    max-width: 72rem;
+    align-items: center;
+    align-content: center;
+  }
   .work.is-h .panel-grid {
-    padding-top: 0.4rem;
+    height: 100%;
   }
   .work.is-h .scene {
-    width: min(100%, 44rem, calc(31svh * 16 / 11));
+    width: min(100%, 40rem, calc((100svh - var(--header-h) - 11rem) * 16 / 11));
   }
-  /* The number sits above the device, on the right of the content column. */
   .panel-num {
     font-size: clamp(3.2rem, 9svh, 6rem);
     top: 0.4rem;
-    right: max(2rem, calc((100% - 56rem) / 2 + 1rem));
-  }
-  .copy {
-    text-align: center;
   }
   .copy h3 {
-    font-size: clamp(2rem, 5.4svh, 3.4rem);
-  }
-  .copy .summary,
-  .copy .points {
-    margin-inline: auto;
-    max-width: 44rem;
-  }
-  .copy .summary {
-    margin-top: 0.7rem;
-    font-size: 1rem;
-  }
-  .copy .points {
-    margin-top: 0.8rem;
-    gap: 0.35rem;
-    font-size: 0.95rem;
-  }
-  .copy .points li {
-    padding-left: 0;
-  }
-  .copy .points li::before {
-    position: static;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 0.55rem;
-  }
-  .copy .facts {
-    justify-content: center;
-    margin-top: 1rem;
-  }
-  .copy .facts > div {
-    text-align: center;
-  }
-  .visit {
-    margin-top: 1rem;
+    font-size: clamp(2.2rem, 6svh, 3.8rem);
   }
 }
 
-/* Short desktop windows: a little tighter, like the short-phone layout. */
+/* Short desktop windows: a little tighter. */
 @media (min-width: 900px) and (max-height: 760px) {
   .work.is-h .panel,
   .work.is-h .device-layer {
     padding-block: 3rem 4rem;
-  }
-  .work.is-h .scene {
-    width: min(100%, 44rem, calc(27svh * 16 / 11));
-  }
-  .panel-num {
-    font-size: 3.4rem;
   }
   .copy .points li:nth-child(n + 4) {
     display: none;
   }
 }
 @media (min-width: 900px) and (max-height: 640px) {
-  .work.is-h .scene {
-    width: min(100%, 44rem, calc(23svh * 16 / 11));
-  }
   .copy h3 {
     font-size: 1.8rem;
   }
@@ -1454,15 +1419,7 @@ body {
     margin-top: 0.4rem;
     font-size: 0.9rem;
   }
-  .copy .points {
-    margin-top: 0.5rem;
-    font-size: 0.88rem;
-  }
   .copy .points li:nth-child(n + 3) {
     display: none;
-  }
-  .copy .facts,
-  .visit {
-    margin-top: 0.6rem;
   }
 }

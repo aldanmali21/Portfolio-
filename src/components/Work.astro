@@ -97,9 +97,13 @@ const n = projects.length;
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
     // Sizes of the two devices, measured from the page (layout size ignores transforms).
-    let geo = { sw: 1, sh: 1, lw: 1, lh: 1, lcx: 0, lcy: 0, pw: 1, ph: 1 };
+    let geo = { sw: 1, sh: 1, lw: 1, lh: 1, lcx: 0, lcy: 0, pw: 1, ph: 1, dx: 0 };
+    // How far the device travels between its two sides: the gap between where the first
+    // (write-up left) and second (write-up right) project's hidden scene sits.
+    const sceneX = (i: number) => panels[i]?.querySelector<HTMLElement>(".scene")?.offsetLeft ?? 0;
     function measure() {
       geo = {
+        dx: sceneX(0) - sceneX(1),
         sw: device.offsetWidth,
         sh: device.offsetHeight,
         lw: laptopEl.offsetWidth,
@@ -117,6 +121,10 @@ const n = projects.length;
       const w = clamp((U - k) / MORPH, 0, 1);
       const f = k % 2 === 0 ? w : 1 - w;
       const c = k + smooth(clamp((U - k - MORPH) / (1 - MORPH), 0, 1));
+      // The device switches sides with the write-up: right for projects 1, 3, 5, left for 2, 4.
+      // It crosses over while the slider moves from one project to the next.
+      const c2 = c % 2;
+      const side = c2 <= 1 ? c2 : 2 - c2; // 0 = right, 1 = left
 
       // The laptop moulds into the phone (and the phone into the laptop): both are scaled
       // to follow ONE outline that goes from the laptop's wide rectangle to the phone's
@@ -151,6 +159,7 @@ const n = projects.length;
       const ls = smooth(clamp((g - 0.3) / 0.28, 0, 1)); // the laptop's coloured desktop
       const lc = smooth(clamp((g - 0.6) / 0.3, 0, 1)); // then what is on it
       return {
+        device: { translate: `${-geo.dx * side}px 0px` },
         laptop: {
           opacity: ol,
           transform: `translate(${cx - lcx}px, ${cy - lcy}px) scale(${slx}, ${sly})`,
@@ -171,6 +180,7 @@ const n = projects.length;
     }
     type DeviceState = ReturnType<typeof deviceState>;
     const deviceTargets: { el: HTMLElement; pick: (st: DeviceState) => Keyframe }[] = [
+      { el: device, pick: (st) => st.device },
       { el: laptopEl, pick: (st) => st.laptop },
       { el: lidEl, pick: (st) => st.lid },
       { el: bezelEl, pick: (st) => st.bezel },
