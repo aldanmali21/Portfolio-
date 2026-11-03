@@ -113,8 +113,9 @@ export const projects: CaseStudy[] = [
     ],
     link: { href: "https://farmarq.com", label: "farmarq.com" },
     urlLabel: "farmarq.com",
-    device: "phone",
-    images: [
+    device: "desktop",
+    images: [{ src: "/images/farmarq-desktop.webp", alt: "Farmarq home page on a computer" }],
+    mobile: [
       { src: "/images/farmarq.webp", alt: "Farmarq home page on a phone", tone: "#dec9bb", aspect: "640 / 1189" },
     ],
   },
@@ -136,8 +137,9 @@ export const projects: CaseStudy[] = [
     ],
     link: { href: "https://kampaladermatology.com", label: "kampaladermatology.com" },
     urlLabel: "kampaladermatology.com",
-    device: "phone",
-    images: [
+    device: "desktop",
+    images: [{ src: "/images/kampala-dermatology-desktop.webp", alt: "Kampala Dermatology home page on a computer" }],
+    mobile: [
       {
         src: "/images/kampala-dermatology.webp",
         alt: "Kampala Dermatology home page on a phone",
