@@ -165,7 +165,7 @@ export const projects: CaseStudy[] = [
     points: [
       "Asks what the client wants (rent or buy, bedrooms, budget) and keeps up when they change their mind.",
       "Matches a listing and books the viewing for the agent to confirm.",
-      "Says when a detail is not in the listing instead of guessing.",
+      "Says so when a detail is missing from the listing.",
     ],
     facts: [
       { label: "Channel", value: "Telegram bot" },
@@ -225,10 +225,10 @@ export const projects: CaseStudy[] = [
     title: "Afritam",
     status: "In progress",
     client: true,
-    summary: "A software consultancy I am building. It is not live yet, so there is no link.",
+    summary: "A software consultancy I am building. It is not live yet.",
     points: [
-      "The website presents its consulting, IT, research and training services.",
-      "Built to work on a phone as well as a computer.",
+      "The website covers consulting, IT, research and training services.",
+      "Works on a phone and a computer.",
     ],
     facts: [
       { label: "Role", value: null }, // TODO
@@ -262,7 +262,7 @@ export const otherProjects: CaseStudy[] = [
     points: [
       "Teachers upload resources and share them with each other.",
       "Works on any device.",
-      "Kept up with regular updates for performance and security.",
+      "Gets regular updates for performance and security.",
     ],
     facts: [
       { label: "Stack", value: "HTML, CSS, JavaScript, PHP" },
