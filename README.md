@@ -1,4 +1,4 @@
-# Chris Yiga: portfolio
+# Chris Yiga Walter: portfolio
 
 A single-page portfolio built with Astro and Tailwind. All copy lives in `src/data/site.ts`.
 Any value set to `null` renders as a visible `TODO` marker; replace it with the real detail.

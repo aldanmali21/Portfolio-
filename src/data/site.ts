@@ -38,10 +38,10 @@ export interface NeedChip {
 }
 
 export const profile = {
-  name: "Chris Yiga",
+  name: "Chris Yiga Walter",
   headline: "Software that does the busywork.",
   subline:
-    "I'm Chris Yiga, a developer who automates workflows with AI and builds secure web and mobile systems for businesses.",
+    "I'm Chris Yiga Walter, a developer who automates workflows with AI and builds secure web and mobile systems for businesses.",
   availability: "Available for new projects",
   location: "Entebbe, Uganda",
   email: "yigachristian@gmail.com",
