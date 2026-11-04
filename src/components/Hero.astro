@@ -31,14 +31,8 @@ const words = profile.headline.split(" ");
   </div>
 
   <p class="mt-7 text-sm text-muted">
-    {currently.text}{" "}
-    {
-      currently.link && (
-        <a href={currently.link.href} class="underline hover:text-accent">
-          {currently.link.label}
-        </a>
-      )
-    }
+    {currently.before}{" "}
+    <a href={currently.href} class="underline hover:text-accent">{currently.name}</a>{currently.after}
   </p>
 
   <div id="needs" class="mt-14 js-only" hidden>

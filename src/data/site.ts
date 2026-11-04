@@ -52,9 +52,11 @@ export const profile = {
 
 /** Afritam: shown as a "Currently" line in the hero. */
 export const currently = {
-  text: "Right now I'm building Afritam, a software consultancy. Not live yet.",
-  // Set this when Afritam has a site to link to; the hero adds the link on its own.
-  link: null as Maybe<{ href: string; label: string }>,
+  before: "Right now I'm building",
+  name: "Afritam",
+  after: ", a software consultancy.",
+  /** The name links to its project in the portfolio, not to an outside site. */
+  href: "#afritam",
 };
 
 export const needs: NeedChip[] = [
@@ -239,6 +241,34 @@ export const projects: CaseStudy[] = [
         alt: "Akalimo home page on a phone",
         tone: "#fdfbff",
         aspect: "251 / 562",
+      },
+    ],
+  },
+  {
+    id: "afritam",
+    kicker: "Software consultancy",
+    title: "Afritam",
+    status: "In progress",
+    summary: "A software consultancy I am building. It is not live yet, so there is no link.",
+    points: [
+      "The website presents its consulting, IT, research and training services.",
+      "Built to work on a phone as well as a computer.",
+    ],
+    facts: [
+      { label: "Role", value: null }, // TODO
+      { label: "Stack", value: null }, // TODO
+      { label: "Result", value: null }, // TODO
+    ],
+    link: null,
+    urlLabel: "not live yet",
+    device: "desktop",
+    images: [{ src: "/images/afritam-desktop.webp", alt: "Afritam home page on a computer: consulting, IT, research and capacity building services" }],
+    mobile: [
+      {
+        src: "/images/afritam-mobile.webp",
+        alt: "Afritam Executive Academy page on a phone",
+        tone: "#ffffff",
+        aspect: "252 / 560",
       },
     ],
   },

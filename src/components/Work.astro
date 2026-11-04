@@ -19,7 +19,7 @@ const n = projects.length;
     </div>
     <Device />
     <div class="rail" data-rail>
-      <span class="rail-count"><span data-rail-num>01 / 05</span><span class="rail-title" data-rail-title></span></span>
+      <span class="rail-count"><span data-rail-num>01 / {String(n).padStart(2, "0")}</span><span class="rail-title" data-rail-title></span></span>
       <div class="rail-ticks">
         {
           projects.map((p, i) => (

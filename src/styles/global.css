@@ -301,6 +301,12 @@ body {
   --b-soft: light-dark(#d3e2f7, #17263d);
   --b-bg: light-dark(#ebf2fc, #0f1826);
 }
+[data-brand="afritam"] {
+  --b: light-dark(#0f4a6e, #e3c46a);
+  --b-ink: light-dark(#ffffff, #231a00);
+  --b-soft: light-dark(#d6e4ee, #2b2a1c);
+  --b-bg: light-dark(#edf3f7, #121b24);
+}
 [data-brand="pearlworth"] {
   --b: light-dark(#2e7d32, #7cc97f);
   --b-ink: light-dark(#ffffff, #08200a);
