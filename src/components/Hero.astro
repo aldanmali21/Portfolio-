@@ -33,12 +33,10 @@ const words = profile.headline.split(" ");
   <p class="mt-7 text-sm text-muted">
     {currently.text}{" "}
     {
-      currently.link ? (
+      currently.link && (
         <a href={currently.link.href} class="underline hover:text-accent">
           {currently.link.label}
         </a>
-      ) : (
-        <span class="todo">Afritam link to add</span>
       )
     }
   </p>

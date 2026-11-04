@@ -52,8 +52,9 @@ export const profile = {
 
 /** Afritam: shown as a "Currently" line in the hero. */
 export const currently = {
-  text: "Right now I'm building Afritam, a software consultancy.",
-  link: null as Maybe<{ href: string; label: string }>, // TODO: Afritam URL
+  text: "Right now I'm building Afritam, a software consultancy. Not live yet.",
+  // Set this when Afritam has a site to link to; the hero adds the link on its own.
+  link: null as Maybe<{ href: string; label: string }>,
 };
 
 export const needs: NeedChip[] = [
@@ -232,7 +233,14 @@ export const projects: CaseStudy[] = [
     urlLabel: "private project",
     device: "desktop",
     images: [{ src: "/images/akalimo-desktop.webp", alt: "Akalimo home page on a computer: a live job with quotes to compare" }],
-    mobile: [{ placeholder: "Mobile view" }], // TODO: akalimo-mobile.png was saved empty (0 bytes)
+    mobile: [
+      {
+        src: "/images/akalimo-mobile.webp",
+        alt: "Akalimo home page on a phone",
+        tone: "#fdfbff",
+        aspect: "251 / 562",
+      },
+    ],
   },
 ];
 
