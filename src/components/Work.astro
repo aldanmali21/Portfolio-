@@ -97,13 +97,32 @@ const n = projects.length;
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
     // Sizes of the two devices, measured from the page (layout size ignores transforms).
-    let geo = { sw: 1, sh: 1, lw: 1, lh: 1, lcx: 0, lcy: 0, pw: 1, ph: 1, dx: 0 };
-    // How far the device travels between its two sides: the gap between where the first
-    // (write-up left) and second (write-up right) project's hidden scene sits.
-    const sceneX = (i: number) => panels[i]?.querySelector<HTMLElement>(".scene")?.offsetLeft ?? 0;
+    let geo = { sw: 1, sh: 1, lw: 1, lh: 1, lcx: 0, lcy: 0, pw: 1, ph: 1, txR: 0, txL: 0, ty: 0 };
+    // The coloured slab behind the device (drawn by .bg::before) as the page lays it out.
+    const slabBox = (el?: HTMLElement) => {
+      if (!el) return null;
+      const cs = getComputedStyle(el, "::before");
+      const box = { l: parseFloat(cs.left), t: parseFloat(cs.top), w: parseFloat(cs.width), h: parseFloat(cs.height) };
+      return Object.values(box).every(Number.isFinite) ? box : null;
+    };
+    // How far the device must move to sit in the middle of the slab on its side: the slab is
+    // on the right for projects 1, 3, 5 and on the left for 2, 4. Phones already centre it.
+    function slabOffsets() {
+      const wide = window.innerWidth >= 900;
+      const right = slabBox(bgs[0]);
+      const left = slabBox(bgs[1]);
+      if (!wide || !right || !left) return { txR: 0, txL: 0, ty: 0 };
+      const dcx = device.offsetLeft + device.offsetWidth / 2;
+      const dcy = device.offsetTop + device.offsetHeight / 2;
+      return {
+        txR: right.l + right.w / 2 - dcx,
+        txL: left.l + left.w / 2 - dcx,
+        ty: right.t + right.h / 2 - dcy,
+      };
+    }
     function measure() {
       geo = {
-        dx: sceneX(0) - sceneX(1),
+        ...slabOffsets(),
         sw: device.offsetWidth,
         sh: device.offsetHeight,
         lw: laptopEl.offsetWidth,
@@ -121,8 +140,8 @@ const n = projects.length;
       const w = clamp((U - k) / MORPH, 0, 1);
       const f = k % 2 === 0 ? w : 1 - w;
       const c = k + smooth(clamp((U - k - MORPH) / (1 - MORPH), 0, 1));
-      // The device switches sides with the write-up: right for projects 1, 3, 5, left for 2, 4.
-      // It crosses over while the slider moves from one project to the next.
+      // The device switches sides with the write-up. It crosses over while the slider moves
+      // from one project to the next.
       const c2 = c % 2;
       const side = c2 <= 1 ? c2 : 2 - c2; // 0 = right, 1 = left
 
@@ -159,7 +178,7 @@ const n = projects.length;
       const ls = smooth(clamp((g - 0.3) / 0.28, 0, 1)); // the laptop's coloured desktop
       const lc = smooth(clamp((g - 0.6) / 0.3, 0, 1)); // then what is on it
       return {
-        device: { translate: `${-geo.dx * side}px 0px` },
+        device: { translate: `${lerp(geo.txR, geo.txL, side)}px ${geo.ty}px` },
         laptop: {
           opacity: ol,
           transform: `translate(${cx - lcx}px, ${cy - lcy}px) scale(${slx}, ${sly})`,
@@ -296,7 +315,26 @@ const n = projects.length;
       },
       { threshold: [0, 0.15, 0.5] },
     );
-    extras.forEach((el) => io.observe(el));
+
+    // Other projects: the phone turns into the laptop as the project scrolls up the screen.
+    let extraRaf = 0;
+    function updateExtras() {
+      extraRaf = 0;
+      const vh = window.innerHeight;
+      extras.forEach((el) => {
+        const top = el.getBoundingClientRect().top;
+        const t = clamp((vh * 0.85 - top) / (vh * 0.5), 0, 1);
+        el.style.setProperty("--m", String(smooth(t)));
+      });
+    }
+    const scheduleExtras = () => {
+      if (!extraRaf) extraRaf = requestAnimationFrame(updateExtras);
+    };
+    if (extras.length) {
+      window.addEventListener("scroll", scheduleExtras, { passive: true });
+      window.addEventListener("resize", scheduleExtras);
+      updateExtras();
+    }
 
     const ro = new ResizeObserver(relayout);
 

@@ -114,9 +114,9 @@ export const projects: CaseStudy[] = [
       "Entries save offline and sync when you reconnect. Android app coming soon.",
     ],
     facts: [
-      { label: "Role", value: null }, // TODO
-      { label: "Stack", value: null }, // TODO
-      { label: "Result", value: null }, // TODO
+      { label: "Role", value: "Lead developer" },
+      { label: "Stack", value: "Next.js, Supabase, Cloudinary, Vercel (hosting), GitHub (version control)" },
+      { label: "Result", value: "Records, due work and money in one place, with team access and offline entry." },
     ],
     link: { href: "https://farmarq.com", label: "farmarq.com" },
     urlLabel: "farmarq.com",
@@ -141,8 +141,8 @@ export const projects: CaseStudy[] = [
       "Shows the clinic's address, opening hours and a skin-care blog.",
     ],
     facts: [
-      { label: "Role", value: null }, // TODO
-      { label: "Stack", value: null }, // TODO
+      { label: "Role", value: "Lead developer" },
+      { label: "Stack", value: "Next.js, Vercel (hosting)" },
       { label: "Result", value: null }, // TODO
     ],
     link: { href: "https://kampaladermatology.com", label: "kampaladermatology.com" },
@@ -172,8 +172,11 @@ export const projects: CaseStudy[] = [
       "Says so when a detail is missing from the listing.",
     ],
     facts: [
-      { label: "Channel", value: "Telegram bot" },
-      { label: "Stack", value: null }, // TODO: AI model and back end
+      { label: "Role", value: "Lead developer" },
+      {
+        label: "Stack",
+        value: "Next.js, Trigger.dev (hosting), Google Calendar (viewings and leads), Telegram bot (AI conversations)",
+      },
       { label: "Result", value: null }, // TODO
     ],
     link: null,
@@ -206,7 +209,8 @@ export const projects: CaseStudy[] = [
       "Urgent updates go to WhatsApp, records to email.",
     ],
     facts: [
-      { label: "Stack", value: "React, TypeScript, Supabase, Mapbox" },
+      { label: "Role", value: "Lead developer" },
+      { label: "Stack", value: "React, TypeScript, Node.js, Supabase (database), Mapbox, Cloudinary" },
       { label: "Access", value: "Private, screenshots only" },
       { label: "Result", value: null }, // TODO
     ],
@@ -225,18 +229,19 @@ export const projects: CaseStudy[] = [
   },
   {
     id: "afritam",
-    kicker: "Software consultancy",
+    kicker: "Software consultancy website",
     title: "Afritam",
     status: "In progress",
     client: true,
-    summary: "A software consultancy I am building. It is not live yet.",
+    summary:
+      "The website for a software consultancy that provides software services, including AI services and software development. It is not live yet.",
     points: [
-      "The website covers consulting, IT, research and training services.",
+      "Presents the consultancy's software development and AI services.",
       "Works on a phone and a computer.",
     ],
     facts: [
-      { label: "Role", value: null }, // TODO
-      { label: "Stack", value: null }, // TODO
+      { label: "Role", value: "Lead developer" },
+      { label: "Stack", value: "Next.js" },
       { label: "Result", value: null }, // TODO
     ],
     link: null,
@@ -269,8 +274,8 @@ export const otherProjects: CaseStudy[] = [
       "Gets regular updates for performance and security.",
     ],
     facts: [
-      { label: "Stack", value: "HTML, CSS, JavaScript, PHP" },
       { label: "Role", value: "Lead developer" },
+      { label: "Stack", value: "HTML, CSS, JavaScript, PHP, InfinityFree (hosting)" },
       { label: "Result", value: null }, // TODO
     ],
     link: {
@@ -296,7 +301,8 @@ export const otherProjects: CaseStudy[] = [
       "Works on a phone for staff out in the field.",
     ],
     facts: [
-      { label: "Stack", value: "PHP, MySQL" },
+      { label: "Role", value: "Lead developer" },
+      { label: "Stack", value: "PHP, MySQL, Cloudinary" },
       { label: "Client", value: "Bart Magunda Katureebe" },
       { label: "Result", value: null }, // TODO
     ],
