@@ -230,12 +230,9 @@ export const projects: CaseStudy[] = [
     ],
     link: null,
     urlLabel: "private project",
-    device: "phone",
-    images: [
-      { placeholder: "Post a job" },
-      { placeholder: "Compare quotes" },
-      { placeholder: "Live tracking" },
-    ],
+    device: "desktop",
+    images: [{ src: "/images/akalimo-desktop.webp", alt: "Akalimo home page on a computer: a live job with quotes to compare" }],
+    mobile: [{ placeholder: "Mobile view" }], // TODO: akalimo-mobile.png was saved empty (0 bytes)
   },
 ];
 
