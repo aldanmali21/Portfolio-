@@ -316,23 +316,33 @@ const n = projects.length;
       { threshold: [0, 0.15, 0.5] },
     );
 
-    // Other projects: the phone turns into the laptop as the project scrolls up the screen.
-    let extraRaf = 0;
+    // Other projects. On wide screens each one is held in place (see .extra-pin in the
+    // stylesheet): it arrives as a phone, and the scrolling that follows turns it into the
+    // laptop. The next project only comes up once that is done. Elsewhere (phones, short
+    // windows) the change plays as the project scrolls up the screen.
+    const holdMq = window.matchMedia(
+      "(min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)",
+    );
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
     function updateExtras() {
-      extraRaf = 0;
       const vh = window.innerHeight;
       extras.forEach((el) => {
-        const top = el.getBoundingClientRect().top;
-        const t = clamp((vh * 0.85 - top) / (vh * 0.5), 0, 1);
-        el.style.setProperty("--m", String(smooth(t)));
+        let t: number;
+        if (calm.matches) {
+          t = 1;
+        } else if (holdMq.matches && el.parentElement) {
+          const pin = el.parentElement;
+          const held = pin.offsetHeight - el.offsetHeight; // scroll distance while it is held
+          t = held > 0 ? (headerH() - pin.getBoundingClientRect().top) / held : 0;
+        } else {
+          t = (vh * 0.85 - el.getBoundingClientRect().top) / (vh * 0.5);
+        }
+        el.style.setProperty("--m", String(smooth(clamp(t, 0, 1))));
       });
     }
-    const scheduleExtras = () => {
-      if (!extraRaf) extraRaf = requestAnimationFrame(updateExtras);
-    };
     if (extras.length) {
-      window.addEventListener("scroll", scheduleExtras, { passive: true });
-      window.addEventListener("resize", scheduleExtras);
+      window.addEventListener("scroll", updateExtras, { passive: true });
+      window.addEventListener("resize", updateExtras);
       updateExtras();
     }
 

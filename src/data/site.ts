@@ -41,7 +41,7 @@ export const profile = {
   name: "Chris Yiga Walter",
   headline: "Software that does the busywork.",
   subline:
-    "I'm Chris Yiga Walter, a developer who automates workflows with AI and builds secure web and mobile systems for businesses.",
+    "I'm Chris Yiga Walter, a developer who automates workflows with AI and builds secure web and mobile application systems for businesses.",
   availability: "Available for new projects",
   location: "Entebbe, Uganda",
   email: "yigachristian@gmail.com",
@@ -52,10 +52,18 @@ export const profile = {
   github: "https://github.com/aldanmali21",
 };
 
+/** Social links. An account only shows on the page once its href is set. */
+export const social: { label: string; href: Maybe<string> }[] = [
+  { label: "LinkedIn", href: null }, // TODO: LinkedIn URL
+  { label: "X", href: null }, // TODO: X URL
+  { label: "Instagram", href: null }, // TODO: Instagram URL
+  { label: "GitHub", href: profile.github },
+];
+
 /** Afritam: shown as a "Currently" line in the hero. */
 export const currently = {
   before: "Right now I'm building",
-  name: "Afritam",
+  name: "Afritam website",
   after: ", a software consultancy.",
   /** The name links to its project in the portfolio, not to an outside site. */
   href: "#afritam",
@@ -116,7 +124,6 @@ export const projects: CaseStudy[] = [
     facts: [
       { label: "Role", value: "Lead developer" },
       { label: "Stack", value: "Next.js, Supabase, Cloudinary, Vercel (hosting), GitHub (version control)" },
-      { label: "Result", value: "Records, due work and money in one place, with team access and offline entry." },
     ],
     link: { href: "https://farmarq.com", label: "farmarq.com" },
     urlLabel: "farmarq.com",
@@ -143,7 +150,6 @@ export const projects: CaseStudy[] = [
     facts: [
       { label: "Role", value: "Lead developer" },
       { label: "Stack", value: "Next.js, Vercel (hosting)" },
-      { label: "Result", value: null }, // TODO
     ],
     link: { href: "https://kampaladermatology.com", label: "kampaladermatology.com" },
     urlLabel: "kampaladermatology.com",
@@ -177,7 +183,6 @@ export const projects: CaseStudy[] = [
         label: "Stack",
         value: "Next.js, Trigger.dev (hosting), Google Calendar (viewings and leads), Telegram bot (AI conversations)",
       },
-      { label: "Result", value: null }, // TODO
     ],
     link: null,
     urlLabel: "Telegram bot: Ctrap",
@@ -212,7 +217,6 @@ export const projects: CaseStudy[] = [
       { label: "Role", value: "Lead developer" },
       { label: "Stack", value: "React, TypeScript, Node.js, Supabase (database), Mapbox, Cloudinary" },
       { label: "Access", value: "Private, screenshots only" },
-      { label: "Result", value: null }, // TODO
     ],
     link: null,
     urlLabel: "private project",
@@ -242,7 +246,6 @@ export const projects: CaseStudy[] = [
     facts: [
       { label: "Role", value: "Lead developer" },
       { label: "Stack", value: "Next.js" },
-      { label: "Result", value: null }, // TODO
     ],
     link: null,
     urlLabel: "not live yet",
@@ -276,7 +279,6 @@ export const otherProjects: CaseStudy[] = [
     facts: [
       { label: "Role", value: "Lead developer" },
       { label: "Stack", value: "HTML, CSS, JavaScript, PHP, InfinityFree (hosting)" },
-      { label: "Result", value: null }, // TODO
     ],
     link: {
       href: "https://pearlworthfoundationschool.com",
@@ -304,7 +306,6 @@ export const otherProjects: CaseStudy[] = [
       { label: "Role", value: "Lead developer" },
       { label: "Stack", value: "PHP, MySQL, Cloudinary" },
       { label: "Client", value: "Bart Magunda Katureebe" },
-      { label: "Result", value: null }, // TODO
     ],
     link: null,
     urlLabel: "private client system",

@@ -20,7 +20,13 @@ import Panel from "./Panel.astro";
   </div>
   <div id="other-body" class="other-body" data-other-body>
     <div class="other-inner">
-      {otherProjects.map((p, i) => <Panel p={p} index={projects.length + i} extra />)}
+      {
+        otherProjects.map((p, i) => (
+          <div class="extra-pin">
+            <Panel p={p} index={projects.length + i} extra />
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>

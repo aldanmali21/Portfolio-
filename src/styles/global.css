@@ -1072,7 +1072,8 @@ body {
 }
 .other-inner {
   min-height: 0;
-  overflow: hidden;
+  /* clip, not hidden: hidden would stop the projects below from sticking while they change. */
+  overflow: clip;
 }
 /* The morph follows the scroll (see Work.astro), so it must not trail behind it. */
 .panel.extra {
@@ -1558,4 +1559,48 @@ body {
     color: rgb(255 255 255 / 0.12);
     -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.85);
   }
+}
+
+/* ---------------------------------------------------------------- */
+/* Other projects: each one holds still, as a phone, when it arrives. */
+/* Scrolling on turns the phone into the laptop (see Work.astro);     */
+/* only after that does the next project come up.                     */
+/* ---------------------------------------------------------------- */
+@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+  .extra-pin {
+    position: relative;
+  }
+  /* The space below the project is the scroll distance it is held for: a sticky element only
+     moves inside its parent's content box, so padding or margin would not give it room. */
+  .extra-pin::after {
+    content: "";
+    display: block;
+    height: 70svh;
+  }
+  .extra-pin > .panel.extra {
+    position: sticky;
+    top: var(--header-h);
+    min-height: calc(100svh - var(--header-h));
+    align-items: center;
+  }
+}
+
+/* Social links */
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.social-link {
+  display: inline-grid;
+  place-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--ink);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.social-link:hover {
+  background: var(--ink);
+  color: var(--paper);
 }

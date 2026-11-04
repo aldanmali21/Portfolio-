@@ -5,6 +5,7 @@ import Hero from "../components/Hero.astro";
 import Work from "../components/Work.astro";
 import Other from "../components/Other.astro";
 import WhatsAppIcon from "../components/WhatsAppIcon.astro";
+import SocialLinks from "../components/SocialLinks.astro";
 import { profile, experience, stack } from "../data/site";
 
 const year = new Date().getFullYear();
@@ -63,10 +64,8 @@ const year = new Date().getFullYear();
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>Email me
     </a>
         </div>
-        <p class="mt-7 text-muted">
-          {profile.phone} &middot; {profile.location} &middot;
-          <a href={profile.github} class="underline hover:text-accent" rel="noopener">GitHub</a>
-        </p>
+        <p class="mt-7 text-muted">{profile.phone} &middot; {profile.location}</p>
+        <div class="mt-5"><SocialLinks /></div>
       </div>
     </section>
   </main>
