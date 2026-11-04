@@ -106,10 +106,12 @@ export const projects: CaseStudy[] = [
     title: "Farmarq",
     status: null,
     summary:
-      "Record-keeping for livestock farmers in Uganda. Each species gets its own workspace for records, work that is due, and money.",
+      "Livestock record-keeping for farms in Uganda and beyond. Cattle and goats each get a workspace for records, due work and money. Free during the beta.",
     points: [
-      "Works offline on the farm, on Android, iPhone and computer.",
-      "Free during beta.",
+      "Pick the activities you run, like milk, meat or breeding.",
+      "A farm overview shows profit across species, with each cost counted once.",
+      "Invite managers, workers and vets, and see who recorded each update.",
+      "Entries save offline and sync when you reconnect. Android app coming soon.",
     ],
     facts: [
       { label: "Role", value: null }, // TODO
@@ -131,10 +133,12 @@ export const projects: CaseStudy[] = [
     status: null,
     client: true,
     summary:
-      "The website for a dermatologist-led clinic that treats skin, hair and nails.",
+      "The website for a dermatologist-led clinic in Bugolobi, Kampala, that treats skin, hair and nails.",
     points: [
       "One main action: book a consultation. The button is in the hero and a booking tab sits on the screen edge.",
-      "WhatsApp chat is a tap away.",
+      "Services and conditions are laid out for patients, from acne and hair loss to eczema and psoriasis.",
+      "Skincare kits are priced in shillings and ordered on WhatsApp.",
+      "Shows the clinic's address, opening hours and a skin-care blog.",
     ],
     facts: [
       { label: "Role", value: null }, // TODO
