@@ -27,7 +27,7 @@ const num = String(index + 1).padStart(2, "0");
         {p.client && <span class="client-tag">Client project</span>}
       </p>
       <h3 class="display mt-2">
-        {p.title}
+        <span class="hl">{p.title}</span>
         {p.status && <span class="status">{p.status}</span>}
       </h3>
       <p class="summary">{p.summary}</p>

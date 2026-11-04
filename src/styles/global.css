@@ -1371,3 +1371,164 @@ body {
     display: none;
   }
 }
+
+/* ---------------------------------------------------------------- */
+/* Poster look: a solid brand-colour slab sits behind the device on  */
+/* its side (it swaps sides with the device), the write-up sits on   */
+/* clean paper. Each project's slab fades in with its background.    */
+/* ---------------------------------------------------------------- */
+.work.is-h .bg {
+  background: color-mix(in srgb, var(--b-bg) 45%, var(--paper));
+}
+.work.is-h .bg::before {
+  content: "";
+  position: absolute;
+  top: 0.9rem;
+  bottom: 3.6rem;
+  right: 1.25rem;
+  width: 53%;
+  border-radius: 2.2rem;
+  background:
+    repeating-radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.13) 0 1px, transparent 1px 30px),
+    linear-gradient(155deg, color-mix(in srgb, var(--accent) 80%, #fff), var(--accent) 55%, color-mix(in srgb, var(--accent) 72%, #000));
+  box-shadow: 0 40px 80px -40px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.work.is-h .bg:nth-child(even)::before {
+  right: auto;
+  left: 1.25rem;
+}
+/* The project number sits on the slab, so it is outlined in white. */
+.work.is-h .panel-num {
+  color: transparent;
+  -webkit-text-stroke: 1px rgb(255 255 255 / 0.5);
+}
+.work.is-h .device-layer .laptop-lid {
+  box-shadow:
+    0 40px 70px -30px rgb(0 0 0 / 0.55),
+    0 10px 24px -10px rgb(0 0 0 / 0.35);
+}
+.work.is-h .device-layer .phone {
+  box-shadow:
+    0 30px 50px -24px rgb(0 0 0 / 0.5),
+    inset 0 0 0 0.4cqw rgb(255 255 255 / 0.28);
+}
+.work.is-h .rail-ticks button i {
+  height: 4px;
+}
+.work.is-h .rail-ticks button[aria-current="true"] i {
+  height: 5px;
+}
+
+.copy h3 {
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.copy h3 .hl {
+  padding-inline: 0.05em;
+  background: linear-gradient(transparent 80%, color-mix(in srgb, var(--accent) 32%, transparent) 80%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.copy .summary {
+  color: color-mix(in srgb, var(--ink) 74%, transparent);
+}
+.facts {
+  padding-top: 0.9rem;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.visit {
+  padding: 0.75rem 1.3rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  transition: translate 0.25s ease;
+}
+.visit span {
+  color: var(--accent);
+}
+.visit:hover {
+  translate: 0 -2px;
+}
+
+/* Phones: the device sits above the text, so the slab only goes behind the device. Its height is
+   the space above the device (--pad) plus the device itself (--sh, the same svh values the scene
+   uses in the phone rules), so it ends just below the device and never runs under the title. */
+@media (max-width: 899px) {
+  .work.is-h {
+    --pad: clamp(3rem, 9svh, 5rem);
+    --sh: 27svh;
+  }
+  .work.is-h .bg::before,
+  .work.is-h .bg:nth-child(even)::before {
+    top: 0.6rem;
+    bottom: auto;
+    left: 0.9rem;
+    right: 0.9rem;
+    width: auto;
+    height: calc(var(--pad) + var(--sh) + 0.5rem);
+    border-radius: 1.6rem;
+  }
+}
+@media (max-width: 899px) and (max-height: 780px) {
+  .work.is-h {
+    --pad: 3.2rem;
+    --sh: 23svh;
+  }
+}
+
+/* Mid-width desktops: give the write-up more room so long titles and bullets wrap less. */
+@media (min-width: 900px) and (max-width: 1100px) {
+  .panel-grid,
+  .panel.flip .panel-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Desktop windows that are not very tall: a tighter write-up, so it never runs into the bar below. */
+@media (min-width: 900px) and (max-height: 800px) {
+  .copy .summary {
+    margin-top: 0.7rem;
+    font-size: 0.95rem;
+  }
+  .points {
+    margin-top: 0.8rem;
+    gap: 0.3rem;
+    font-size: 0.92rem;
+  }
+  .facts {
+    margin-top: 1rem;
+    padding-top: 0.6rem;
+  }
+  .visit {
+    margin-top: 1rem;
+    padding: 0.6rem 1.15rem;
+  }
+}
+
+/* Phones that are not very tall: a little more room for the write-up. */
+@media (max-width: 899px) and (min-height: 781px) and (max-height: 860px) {
+  .work.is-h {
+    --sh: 25svh;
+  }
+  .work.is-h .scene {
+    width: min(100%, calc(25svh * 16 / 11));
+  }
+}
+/* Short phones: smaller device, one bullet and no fact chips, so the text always clears the bar below. */
+@media (max-width: 899px) and (max-height: 700px) {
+  .work.is-h {
+    --sh: 21svh;
+  }
+  .work.is-h .scene {
+    width: min(100%, calc(21svh * 16 / 11));
+  }
+  .work.is-h .copy .points li:nth-child(n + 2),
+  .work.is-h .facts {
+    display: none;
+  }
+  .work.is-h .copy .visit {
+    margin-top: 0.6rem;
+  }
+}
