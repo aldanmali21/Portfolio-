@@ -271,7 +271,8 @@ const n = projects.length;
       const p = clamp((hh - rect.top) / span(), 0, 1);
       // Fallback for browsers without scroll-linked animations.
       if (!timeline) applyDevice(p * maxU);
-      const idx = Math.round(Math.min(p * maxU, N - 1));
+      // The counter follows the slide (c), so it changes halfway across rather than when the morph ends.
+      const idx = Math.round(Math.min(deviceState(p * maxU).c, N - 1));
       if (idx !== active) {
         active = idx;
         ticks.forEach((t, i) => t.setAttribute("aria-current", String(i === idx)));
