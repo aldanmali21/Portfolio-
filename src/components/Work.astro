@@ -174,12 +174,24 @@ const n = projects.length;
           opacity: op,
           transform: `translate(-50%, -50%) translate(${cx - sw / 2}px, ${cy - sh / 2}px) scale(${spx}, ${spy})`,
         },
+        c,
         strip: { transform: `translate3d(${(-c * 100) / N}%,0,0)` },
         urls: urlEls.map((_, i) => ({ opacity: clamp(1 - Math.abs(c - i) * 1.6, 0, 1) })),
       };
     }
     type DeviceState = ReturnType<typeof deviceState>;
+    const copyEls = panels.map((p) => p.querySelector<HTMLElement>(".copy")!);
+    const numEls = panels.map((p) => p.querySelector<HTMLElement>(".panel-num")!);
+    // Everything that moves sideways follows c, the same curve as the device: it stays put while
+    // the phone turns into the laptop (or back), and only moves once that change is finished.
+    const slideTargets: { el: HTMLElement; pick: (st: DeviceState) => Keyframe }[] = [
+      { el: track, pick: (st) => ({ transform: `translate3d(${-st.c * 100}%,0,0)` }) },
+      ...copyEls.map((el, i) => ({ el, pick: (st: DeviceState) => ({ translate: `${clamp(i - st.c, -1, 1) * 2.5}rem 0` }) })),
+      ...numEls.map((el, i) => ({ el, pick: (st: DeviceState) => ({ translate: `${clamp(i - st.c, -1, 1) * 6}rem 0` }) })),
+      ...bgs.map((el, i) => ({ el, pick: (st: DeviceState) => ({ opacity: i === 0 ? 1 : clamp(st.c - (i - 1), 0, 1) }) })),
+    ];
     const deviceTargets: { el: HTMLElement; pick: (st: DeviceState) => Keyframe }[] = [
+      ...slideTargets,
       { el: device, pick: (st) => st.device },
       { el: laptopEl, pick: (st) => st.laptop },
       { el: lidEl, pick: (st) => st.lid },
@@ -237,26 +249,10 @@ const n = projects.length;
       );
     }
 
-    // Tell the stylesheet where each animation starts and ends, in scroll pixels.
+    // Work out where the section starts in scroll pixels, then rebuild the scroll-linked animations.
     function layoutTimeline() {
       const start = window.scrollY + work!.getBoundingClientRect().top - headerH();
-      const sp = span();
-      const seg = sp / maxU;
-      work!.style.setProperty("--s", `${start}px`);
-      // The sideways slide stops when the last project arrives; the final change plays after it.
-      work!.style.setProperty("--e", `${start + (N - 1) * seg}px`);
-      bgs.forEach((el, i) => {
-        if (i === 0) return;
-        const c = start + i * seg;
-        el.style.setProperty("--bs", `${Math.max(0, c - 0.9 * seg)}px`);
-        el.style.setProperty("--be", `${c - 0.1 * seg}px`);
-      });
-      buildDeviceAnims(start, seg);
-      panels.forEach((el, i) => {
-        const c = start + i * seg;
-        el.style.setProperty("--ps", `${Math.max(0, c - seg)}px`);
-        el.style.setProperty("--pe", `${c + seg}px`);
-      });
+      buildDeviceAnims(start, span() / maxU);
     }
     let layoutRaf = 0;
     const relayout = () => {
@@ -273,21 +269,8 @@ const n = projects.length;
       const hh = headerH();
       const rect = work!.getBoundingClientRect();
       const p = clamp((hh - rect.top) / span(), 0, 1);
-      if (!timeline) {
-        // Fallback for browsers without scroll-linked animations.
-        const vw = stage.clientWidth;
-        const u = p * maxU;
-        const slide = Math.min(u, N - 1); // the slide stops on the last project
-        track.style.transform = `translate3d(${-slide * vw}px,0,0)`;
-        panels.forEach((el, i) => {
-          const d = i - slide;
-          el.style.setProperty("--d", String(clamp(d, -1, 1)));
-        });
-        applyDevice(u);
-        bgs.forEach((el, i) => {
-          if (i > 0) el.style.opacity = String(smooth(clamp((u - (i - 0.9)) / 0.8, 0, 1)));
-        });
-      }
+      // Fallback for browsers without scroll-linked animations.
+      if (!timeline) applyDevice(p * maxU);
       const idx = Math.round(Math.min(p * maxU, N - 1));
       if (idx !== active) {
         active = idx;
@@ -350,13 +333,7 @@ const n = projects.length;
       track.style.transform = "";
       cancelDeviceAnims();
       clearDevice();
-      ["--s", "--e"].forEach((v) => work!.style.removeProperty(v));
-      bgs.forEach((el) => {
-        el.style.opacity = "";
-        ["--bs", "--be"].forEach((v) => el.style.removeProperty(v));
-      });
       panels.forEach((el) => {
-        ["--ps", "--pe"].forEach((v) => el.style.removeProperty(v));
         el.style.setProperty("--m", "0");
         el.style.setProperty("--d", "0");
         io.observe(el);

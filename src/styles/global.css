@@ -1013,81 +1013,9 @@ body {
   }
 }
 
-/* ---------------------------------------------------------------- */
-/* Smooth mode: the browser runs the slide itself, in step with the  */
-/* scroll, so it never trails your finger. Needs scroll-linked       */
-/* animations; other browsers use the script-driven fallback.        */
-/*                                                                   */
-/* The device changes form in a cycle: phone, laptop, phone, laptop. */
-/* Project 1 turns from phone to laptop as you scroll away; project  */
-/* 2 arrives as that laptop, then turns back into a phone; and so on. */
-/* ---------------------------------------------------------------- */
-@keyframes track-slide {
-  to {
-    /* The track box is one screen wide; the panels overflow it. */
-    transform: translate3d(calc(-100% * (var(--n) - 1)), 0, 0);
-  }
-}
-@keyframes drift-copy {
-  from {
-    translate: 2.5rem 0;
-  }
-  to {
-    translate: -2.5rem 0;
-  }
-}
-@keyframes drift-num {
-  from {
-    translate: 6rem 0;
-  }
-  to {
-    translate: -6rem 0;
-  }
-}
-@keyframes bg-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-/* Written as separate properties on purpose: the minifier would otherwise merge them
-   into one `animation` shorthand that some browsers reject.
-   (The shared laptop and phone are animated from the script: see Work.astro.) */
-@supports (animation-timeline: scroll()) {
-  .work.tl .track {
-    animation-name: track-slide;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: scroll(root block);
-    animation-range-start: var(--s);
-    animation-range-end: var(--e);
-  }
-  .work.tl .panel .copy {
-    animation-name: drift-copy;
-  }
-  .work.tl .panel .panel-num {
-    animation-name: drift-num;
-  }
-  .work.tl .panel .copy,
-  .work.tl .panel .panel-num {
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: scroll(root block);
-    animation-range-start: var(--ps);
-    animation-range-end: var(--pe);
-  }
-  /* Each background fades in over the one before it. */
-  .work.tl .bg:not(:first-child) {
-    animation-name: bg-in;
-    animation-timing-function: ease-in-out;
-    animation-fill-mode: both;
-    animation-timeline: scroll(root block);
-    animation-range-start: var(--bs);
-    animation-range-end: var(--be);
-  }
-}
+/* The slide, the write-up drift and the background fades are driven from Work.astro on the same
+   curve as the laptop and phone: nothing moves sideways while the device changes form, and the
+   next project only starts to arrive once that change has finished. */
 
 /* ---------------------------------------------------------------- */
 /* Other projects: behind a button                                   */
