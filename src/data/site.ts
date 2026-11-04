@@ -167,13 +167,16 @@ export const projects: CaseStudy[] = [
     ],
     link: null,
     urlLabel: "Telegram bot: Ctrap",
-    device: "phone",
+    device: "desktop",
     images: [
+      { src: "/images/real-estate-desktop.webp", alt: "Telegram on a computer: the Real Estate AI Assistant chatting with a client" },
+    ],
+    mobile: [
       {
-        src: "/images/real-estate-ai.webp",
+        src: "/images/real-estate-mobile.webp",
         alt: "Telegram chat with the Real Estate AI Assistant matching a listing and booking a viewing",
-        tone: "#90b897",
-        aspect: "640 / 1267",
+        tone: "#0b0b0b",
+        aspect: "540 / 1204",
       },
     ],
   },
@@ -197,8 +200,15 @@ export const projects: CaseStudy[] = [
     link: null,
     urlLabel: "private client system",
     device: "desktop",
-    images: [{ placeholder: "Dashboard screenshot" }],
-    mobile: [{ placeholder: "Mobile view" }],
+    images: [{ src: "/images/bmk-desktop.webp", alt: "BMK Farm Management System dashboard on a computer" }],
+    mobile: [
+      {
+        src: "/images/bmk-mobile.webp",
+        alt: "BMK Farm Management System dashboard on a phone",
+        tone: "#f9fafb",
+        aspect: "250 / 560",
+      },
+    ],
   },
   {
     id: "akalimo",
