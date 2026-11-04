@@ -560,7 +560,9 @@ body {
 }
 .laptop {
   position: absolute;
-  inset: 0 3% 10% 3%;
+  /* A wide, shallow screen, shaped like the desktop screenshots (about 2:1), so they show in
+     full instead of being cropped at the sides. The scene keeps its size for the phone. */
+  inset: 5% 3% 16% 3%;
   opacity: var(--m);
   transform: scale(calc(0.92 + 0.08 * var(--m)));
   transform-origin: 50% 70%;
