@@ -13,6 +13,8 @@ export interface CaseStudy {
   kicker: string;
   title: string;
   status: Maybe<string>;
+  /** Work done for a client, as opposed to a product of my own. */
+  client?: boolean;
   summary: string;
   points: string[];
   facts: Fact[];
@@ -127,6 +129,7 @@ export const projects: CaseStudy[] = [
     kicker: "Clinic website",
     title: "Kampala Dermatology",
     status: null,
+    client: true,
     summary:
       "The website for a dermatologist-led clinic that treats skin, hair and nails.",
     points: [
@@ -156,6 +159,7 @@ export const projects: CaseStudy[] = [
     kicker: "AI automation",
     title: "Real Estate AI Assistant",
     status: "In progress",
+    client: true,
     summary:
       "A Telegram bot that talks to property clients first, so the agent only steps in when there is a viewing to confirm.",
     points: [
@@ -184,40 +188,11 @@ export const projects: CaseStudy[] = [
     ],
   },
   {
-    id: "bmk",
-    kicker: "Farm management",
-    title: "BMK Farm Management System",
-    status: "Ongoing",
-    summary:
-      "A farm management system for Bart Magunda Katureebe, former Chief Justice of Uganda.",
-    points: [
-      "Tracks animal health, history and productivity.",
-      "Separate access for administrators, managers and veterinarians.",
-      "Works on a phone for staff out in the field.",
-    ],
-    facts: [
-      { label: "Stack", value: "PHP, MySQL" },
-      { label: "Client", value: "Bart Magunda Katureebe" },
-      { label: "Result", value: null }, // TODO
-    ],
-    link: null,
-    urlLabel: "private client system",
-    device: "desktop",
-    images: [{ src: "/images/bmk-desktop.webp", alt: "BMK Farm Management System dashboard on a computer" }],
-    mobile: [
-      {
-        src: "/images/bmk-mobile.webp",
-        alt: "BMK Farm Management System dashboard on a phone",
-        tone: "#f9fafb",
-        aspect: "250 / 560",
-      },
-    ],
-  },
-  {
     id: "akalimo",
     kicker: "Marketplace",
     title: "Akalimo",
-    status: null,
+    status: "In progress",
+    client: true,
     summary:
       "A marketplace that connects clients with tradespeople. A client posts a job, tradespeople send quotes, and payment sits in escrow until the work is approved.",
     points: [
@@ -249,6 +224,7 @@ export const projects: CaseStudy[] = [
     kicker: "Software consultancy",
     title: "Afritam",
     status: "In progress",
+    client: true,
     summary: "A software consultancy I am building. It is not live yet, so there is no link.",
     points: [
       "The website presents its consulting, IT, research and training services.",
@@ -281,6 +257,7 @@ export const otherProjects: CaseStudy[] = [
     kicker: "School website",
     title: "Pearlworth Foundation School",
     status: null,
+    client: true,
     summary: "The website for Pearlworth Foundation School.",
     points: [
       "Teachers upload resources and share them with each other.",
@@ -300,6 +277,37 @@ export const otherProjects: CaseStudy[] = [
     device: "desktop",
     images: [{ placeholder: "Website screenshot" }],
     mobile: [{ placeholder: "Mobile view" }],
+  },
+  {
+    id: "bmk",
+    kicker: "Farm management",
+    title: "BMK Farm Management System",
+    status: "Ongoing",
+    client: true,
+    summary:
+      "A farm management system for Bart Magunda Katureebe, former Chief Justice of Uganda.",
+    points: [
+      "Tracks animal health, history and productivity.",
+      "Separate access for administrators, managers and veterinarians.",
+      "Works on a phone for staff out in the field.",
+    ],
+    facts: [
+      { label: "Stack", value: "PHP, MySQL" },
+      { label: "Client", value: "Bart Magunda Katureebe" },
+      { label: "Result", value: null }, // TODO
+    ],
+    link: null,
+    urlLabel: "private client system",
+    device: "desktop",
+    images: [{ src: "/images/bmk-desktop.webp", alt: "BMK Farm Management System dashboard on a computer" }],
+    mobile: [
+      {
+        src: "/images/bmk-mobile.webp",
+        alt: "BMK Farm Management System dashboard on a phone",
+        tone: "#f9fafb",
+        aspect: "250 / 560",
+      },
+    ],
   },
 ];
 

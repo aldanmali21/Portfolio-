@@ -474,6 +474,18 @@ body {
   text-transform: uppercase;
   font-weight: 700;
 }
+.client-tag {
+  display: inline-block;
+  margin-left: 0.6rem;
+  padding: 0.05rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
 .match-tag {
   display: none;
   margin-bottom: 0.9rem;

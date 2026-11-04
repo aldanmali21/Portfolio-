@@ -22,7 +22,10 @@ const num = String(index + 1).padStart(2, "0");
   <div class="panel-grid">
     <div class="copy">
       <span class="match-tag">Matches what you picked</span>
-      <p class="label">{p.kicker}</p>
+      <p class="label">
+        {p.kicker}
+        {p.client && <span class="client-tag">Client project</span>}
+      </p>
       <h3 class="display mt-2">
         {p.title}
         {p.status && <span class="status">{p.status}</span>}
