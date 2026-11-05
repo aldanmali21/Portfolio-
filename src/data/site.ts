@@ -41,7 +41,7 @@ export const profile = {
   name: "Chris Yiga Walter",
   headline: "Software that does the busywork.",
   subline:
-    "I'm Chris Yiga Walter, a developer who automates workflows with AI and builds secure web and mobile application systems for businesses.",
+    "I help businesses find the work that eats their time and their customers, then fix it with websites, software and AI automation that handles the follow-ups.",
   availability: "Available for new projects",
   location: "Entebbe, Uganda",
   email: "yigachristian@gmail.com",
