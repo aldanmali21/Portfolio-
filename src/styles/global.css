@@ -1425,12 +1425,6 @@ body {
   letter-spacing: -0.045em;
   text-wrap: balance;
 }
-.copy h3 .hl {
-  padding-inline: 0.05em;
-  background: linear-gradient(transparent 80%, color-mix(in srgb, var(--accent) 32%, transparent) 80%);
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
 .copy .summary {
   color: color-mix(in srgb, var(--ink) 74%, transparent);
 }
