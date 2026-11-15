@@ -8,7 +8,10 @@ const n = projects.length;
 
 <section id="work" class="work" data-work style={`--n:${n}`} aria-label="Selected work">
   <div class="work-intro wrap pt-14 pb-2">
-    <p class="label">Selected work</p>
+    <div class="meta-row">
+      <p class="label">Selected work</p>
+      <span class="text-muted tabular-nums">{String(n).padStart(2, "0")} projects</span>
+    </div>
   </div>
   <div class="stage">
     <div class="bgs" aria-hidden="true">

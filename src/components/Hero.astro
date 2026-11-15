@@ -1,39 +1,50 @@
 ---
-import { profile, currently, needs } from "../data/site";
+import { profile, currently, needs, chores } from "../data/site";
 import WhatsAppIcon from "./WhatsAppIcon.astro";
 
 const words = profile.headline.split(" ");
 ---
 
-<section id="top" class="wrap pb-16 pt-12 sm:pb-24 sm:pt-20">
-  <p class="mb-7 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
-    <span class="inline-flex items-center gap-2">
-      <span class="h-2 w-2 rounded-full bg-[#25d366]" aria-hidden="true"></span>
-      {profile.availability}
-    </span>
-    <span>
-      {profile.location}<span id="local-time" class="tabular-nums"></span>
-    </span>
-  </p>
-
-  <h1 class="display headline max-w-5xl text-[clamp(3.1rem,9.5vw,8.2rem)]">
-    {words.map((w, i) => <><span class="word" style={`--i:${i}`}>{w}</span>{" "}</>)}
-  </h1>
-  <p class="mt-7 max-w-2xl text-lg text-muted sm:text-xl">{profile.subline}</p>
-
-  <div class="mt-9 flex flex-wrap items-center gap-3">
-    <a href={profile.whatsapp} class="btn btn-wa" rel="noopener">
-      <WhatsAppIcon />Message me
-    </a>
-    <a href={`mailto:${profile.email}`} class="btn btn-ghost">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>Email me
-    </a>
+<section id="top" class="hero wrap pb-16 pt-8 sm:pb-24 sm:pt-12">
+  <div class="meta-row">
+    <span class="avail"><span class="avail-dot" aria-hidden="true"></span>{profile.availability}</span>
+    <span class="text-muted">{profile.location}<span id="local-time" class="tabular-nums"></span></span>
   </div>
 
-  <p class="mt-7 text-sm text-muted">
-    {currently.before}{" "}
-    <a href={currently.href} class="underline hover:text-accent">{currently.name}</a>{currently.after}
-  </p>
+  <h1 class="display headline">
+    {words.map((w, i) => <><span class="word" style={`--i:${i}`}>{w}</span>{" "}</>)}
+  </h1>
+
+  <div class="hero-row">
+    <div>
+      <p class="label-muted">{chores.label}</p>
+      <ul class="chores">
+        {
+          chores.items.map((c, i) => (
+            <li style={`--k:${i}`}>
+              <span class="chore-check" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10" /></svg>
+              </span>
+              <span class="chore-text">{c}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div>
+      <p class="hero-sub">{profile.subline}</p>
+      <div class="hero-ctas" id="hero-ctas">
+        <a href={profile.whatsapp} class="btn btn-wa" rel="noopener"><WhatsAppIcon />Message me on WhatsApp</a>
+        <a href={`mailto:${profile.email}`} class="btn btn-ghost">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>Email me
+        </a>
+      </div>
+      <p class="hero-now">
+        {currently.before} <a href={currently.href}>{currently.name}</a>{currently.after}
+      </p>
+    </div>
+  </div>
 
   <div id="needs" class="mt-14 js-only" hidden>
     <p class="label mb-3">What do you need built?</p>
@@ -117,7 +128,7 @@ const words = profile.headline.split(" ");
       minute: "2-digit",
       timeZone: "Africa/Kampala",
     });
-    const tick = () => (clock.textContent = ` \u00b7 ${fmt.format(new Date())} local time`);
+    const tick = () => (clock.textContent = ` \u00b7 ${fmt.format(new Date())}`);
     tick();
     setInterval(tick, 30000);
   }

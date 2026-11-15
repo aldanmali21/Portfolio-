@@ -52,6 +52,17 @@ export const profile = {
   github: "https://github.com/aldanmali21",
 };
 
+/** The everyday chores the hero crosses off, one by one. */
+export const chores = {
+  label: "The busywork I take off your plate",
+  items: [
+    "Answering the same WhatsApp questions all day",
+    "Typing bookings into a spreadsheet",
+    "Chasing clients for payment",
+    "Reminding people about appointments",
+  ],
+};
+
 /** Social links. An account only shows on the page once its href is set. */
 export const social: { label: string; href: Maybe<string> }[] = [
   { label: "LinkedIn", href: null }, // TODO: LinkedIn URL

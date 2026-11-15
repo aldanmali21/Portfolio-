@@ -35,3 +35,11 @@ _Avoid_: Mockup, frame, preview
 **Other projects**:
 The projects kept out of the main slider and revealed by a button below it.
 _Avoid_: Archive, more work, see all
+
+**Chore list**:
+The ruled list in the hero naming everyday busywork, each item ticked and crossed off in turn.
+_Avoid_: Feature list, checklist
+
+**Contact dock**:
+The phone-only bar with WhatsApp and email that appears once the hero buttons scroll away.
+_Avoid_: Sticky footer, floating button
