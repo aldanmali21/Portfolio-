@@ -1,0 +1,96 @@
+---
+// PROTOTYPE (throwaway): floating bar to flip between hero variants.
+// Only rendered when the site is built with PUBLIC_HERO_PROTOTYPE=1.
+interface Props {
+  variants: { key: string; name: string }[];
+}
+const { variants } = Astro.props;
+---
+
+<div class="proto-bar" id="proto-bar" data-variants={JSON.stringify(variants)}>
+  <button type="button" data-step="-1" aria-label="Previous hero variant">‹</button>
+  <span id="proto-label" aria-live="polite"></span>
+  <button type="button" data-step="1" aria-label="Next hero variant">›</button>
+</div>
+
+<script>
+  const bar = document.getElementById("proto-bar")!;
+  const label = document.getElementById("proto-label")!;
+  const variants: { key: string; name: string }[] = JSON.parse(bar.dataset.variants!);
+  const root = document.documentElement;
+  const render = () => {
+    const v = variants.find((x) => x.key === root.dataset.variant) ?? variants[0];
+    label.textContent = `${v.key.toUpperCase()} · ${v.name}`;
+  };
+  const go = (step: number) => {
+    const i = variants.findIndex((x) => x.key === root.dataset.variant);
+    const next = variants[(i + step + variants.length) % variants.length];
+    root.dataset.variant = next.key;
+    const url = new URL(location.href);
+    url.searchParams.set("variant", next.key);
+    history.replaceState(null, "", url);
+    render();
+    window.scrollTo({ top: 0 });
+  };
+  bar.querySelectorAll<HTMLButtonElement>("button").forEach((b) =>
+    b.addEventListener("click", () => go(Number(b.dataset.step))),
+  );
+  document.addEventListener("keydown", (e) => {
+    const t = e.target as HTMLElement;
+    if (t.closest("input, textarea, [contenteditable]")) return;
+    if (e.key === "ArrowLeft") go(-1);
+    if (e.key === "ArrowRight") go(1);
+  });
+  render();
+</script>
+
+<style is:global>
+  :root {
+    --proto-bar: 3.6rem;
+  }
+  .proto-bar {
+    position: fixed;
+    left: 50%;
+    bottom: calc(env(safe-area-inset-bottom) + 0.6rem);
+    transform: translateX(-50%);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    font: 600 0.8rem/1 system-ui, sans-serif;
+    box-shadow: 0 10px 30px -8px #000a;
+    white-space: nowrap;
+    border: 1px solid #ffffff30;
+  }
+  .proto-bar button {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    background: #ffffff18;
+  }
+  .proto-bar button:hover {
+    background: #ffffff30;
+  }
+  .proto-bar span {
+    padding-inline: 0.6rem;
+    min-width: 11rem;
+    text-align: center;
+  }
+  /* Show only the active variant. */
+  [data-v] {
+    display: none;
+  }
+  html[data-variant="current"] [data-v="current"],
+  html[data-variant="a"] [data-v="a"],
+  html[data-variant="b"] [data-v="b"],
+  html[data-variant="c"] [data-v="c"] {
+    display: block;
+  }
+</style>

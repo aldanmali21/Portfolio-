@@ -1,0 +1,311 @@
+---
+// PROTOTYPE (throwaway): hero direction B, "Crossed off".
+// Editorial type-led hero: the busywork itself is listed and struck off one by
+// one, a strip of real project names gives proof, and on phones a thumb-reach
+// contact dock appears once the main buttons scroll away.
+import { profile, currently, projects } from "../../data/site";
+import WhatsAppIcon from "../WhatsAppIcon.astro";
+
+const chores = [
+  "Answering the same WhatsApp questions all day",
+  "Typing bookings into a spreadsheet",
+  "Chasing clients for payment",
+  "Reminding people about appointments",
+];
+const work = projects.map((p) => ({ id: p.id, title: p.title, kicker: p.kicker }));
+---
+
+<div data-v="b" class="hB">
+  <div class="hB-top">
+    <span class="hB-status"><span class="hB-dot" aria-hidden="true"></span>{profile.availability}</span>
+    <span class="text-muted">{profile.location} · <span data-clock class="tabular-nums"></span></span>
+  </div>
+
+  <h1 class="display hB-h">Software that does the <span class="hB-em">busywork.</span></h1>
+
+  <div class="hB-row">
+    <div class="hB-listwrap">
+      <p class="hB-label">The busywork I take off your plate</p>
+      <ul class="hB-list">
+        {
+          chores.map((c, i) => (
+            <li style={`--k:${i}`}>
+              <span class="hB-check" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10" /></svg>
+              </span>
+              <span class="hB-txt">{c}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="hB-pitch">
+      <p class="hB-sub">{profile.subline}</p>
+      <div class="hB-ctas" id="hB-ctas">
+        <a href={profile.whatsapp} class="btn btn-wa" rel="noopener"><WhatsAppIcon />Message me on WhatsApp</a>
+        <a href={`mailto:${profile.email}`} class="btn btn-ghost">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>Email me
+        </a>
+      </div>
+      <p class="hB-now">
+        {currently.before} <a href={currently.href}>{currently.name}</a>{currently.after}
+      </p>
+    </div>
+  </div>
+
+  <div class="hB-proof">
+    <p class="hB-label">Recently built</p>
+    <div class="hB-marquee">
+      <div class="hB-track">
+        {
+          [...work, ...work].map((w, i) => (
+            <a href={`#${w.id}`} class="hB-item" aria-hidden={i >= work.length ? "true" : undefined} tabindex={i >= work.length ? -1 : undefined}>
+              <span>{w.title}</span>
+              <small>{w.kicker}</small>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="hB-dock" id="hB-dock" aria-hidden="true">
+    <a href={profile.whatsapp} class="btn btn-wa" rel="noopener" tabindex="-1"><WhatsAppIcon />Message me</a>
+    <a href={`mailto:${profile.email}`} class="hB-mail" aria-label="Email me" tabindex="-1">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
+    </a>
+  </div>
+</div>
+
+<script>
+  const ctas = document.getElementById("hB-ctas");
+  const dock = document.getElementById("hB-dock");
+  if (ctas && dock) {
+    new IntersectionObserver(([e]) => {
+      const show = !e.isIntersecting && e.boundingClientRect.top < 0;
+      dock.classList.toggle("is-on", show);
+      dock.setAttribute("aria-hidden", show ? "false" : "true");
+      dock.querySelectorAll("a").forEach((a) => (a.tabIndex = show ? 0 : -1));
+    }).observe(ctas);
+  }
+</script>
+
+<style is:global>
+  .hB-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.85rem;
+  }
+  .hB-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+  .hB-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: #25d366;
+    box-shadow: 0 0 0 4px #25d36630;
+  }
+  .hB-h {
+    margin-top: clamp(1.75rem, 5vw, 3rem);
+    font-size: clamp(3rem, 13.5vw, 7.25rem);
+    letter-spacing: -0.055em;
+    line-height: 0.9;
+  }
+  .hB-em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 800;
+  }
+  .hB-row {
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    display: grid;
+    gap: 2.25rem;
+  }
+  @media (min-width: 900px) {
+    .hB-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+  }
+  .hB-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .hB-list {
+    margin-top: 0.75rem;
+    border-top: 1px solid var(--line);
+  }
+  .hB-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: clamp(1rem, 2.6vw, 1.12rem);
+    font-weight: 500;
+  }
+  .hB-check {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    color: transparent;
+    animation: hB-tick 0.35s both;
+    animation-delay: calc(var(--k) * 0.65s + 0.9s);
+  }
+  @keyframes hB-tick {
+    to {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-ink);
+    }
+  }
+  .hB-txt {
+    background: linear-gradient(currentColor, currentColor) no-repeat 0 55% / 0% 2px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    animation: hB-strike 0.5s cubic-bezier(0.6, 0, 0.3, 1) both;
+    animation-delay: calc(var(--k) * 0.65s + 0.9s);
+  }
+  @keyframes hB-strike {
+    to {
+      background-size: 100% 2px;
+      color: var(--muted);
+    }
+  }
+  .hB-sub {
+    font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+    line-height: 1.5;
+  }
+  .hB-ctas {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  @media (max-width: 520px) {
+    .hB-ctas {
+      display: grid;
+    }
+    .hB-ctas .btn {
+      justify-content: center;
+      padding-block: 0.95rem;
+    }
+  }
+  .hB-now {
+    margin-top: 1.25rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .hB-now a {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 3px;
+  }
+
+  .hB-proof {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+  .hB-marquee {
+    margin-top: 0.75rem;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .hB-track {
+    display: flex;
+    gap: 0.6rem;
+    width: max-content;
+    animation: hB-scroll 32s linear infinite;
+  }
+  .hB-marquee:hover .hB-track {
+    animation-play-state: paused;
+  }
+  @keyframes hB-scroll {
+    to {
+      transform: translateX(calc(-50% - 0.3rem));
+    }
+  }
+  .hB-item {
+    display: grid;
+    padding: 0.7rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 0.9rem;
+    background: var(--paper);
+    line-height: 1.25;
+    transition: border-color 0.15s;
+  }
+  .hB-item:hover {
+    border-color: var(--accent);
+  }
+  .hB-item span {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .hB-item small {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  /* Phone-only sticky contact dock */
+  .hB-dock {
+    position: fixed;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: calc(env(safe-area-inset-bottom) + 0.75rem + var(--proto-bar, 0px));
+    z-index: 45;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.45rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--paper) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--line);
+    box-shadow: 0 16px 40px -16px #0006;
+    transform: translateY(calc(100% + 8rem));
+    visibility: hidden;
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0.35s;
+  }
+  .hB-dock.is-on {
+    transform: none;
+    visibility: visible;
+  }
+  .hB-dock .btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .hB-mail {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+  }
+  @media (min-width: 768px) {
+    .hB-dock {
+      display: none;
+    }
+  }
+  html:not([data-variant="b"]) .hB-dock {
+    display: none;
+  }
+</style>

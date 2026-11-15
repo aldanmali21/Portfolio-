@@ -1,11 +1,37 @@
 ---
 import { profile, currently, needs } from "../data/site";
 import WhatsAppIcon from "./WhatsAppIcon.astro";
+// PROTOTYPE (throwaway): hero variants, only built with PUBLIC_HERO_PROTOTYPE=1.
+import HeroA from "./hero-prototype/HeroA.astro";
+import HeroB from "./hero-prototype/HeroB.astro";
+import HeroC from "./hero-prototype/HeroC.astro";
+import PrototypeSwitcher from "./hero-prototype/PrototypeSwitcher.astro";
+
+const proto = import.meta.env.PUBLIC_HERO_PROTOTYPE === "1";
+const protoVariants = [
+  { key: "a", name: "Live workflow" },
+  { key: "b", name: "Crossed off" },
+  { key: "c", name: "Bento" },
+  { key: "current", name: "Current hero" },
+];
 
 const words = profile.headline.split(" ");
 ---
 
 <section id="top" class="wrap pb-16 pt-12 sm:pb-24 sm:pt-20">
+  {proto && (
+    <script is:inline>
+      (function () {
+        var keys = ["a", "b", "c", "current"];
+        var v = new URLSearchParams(location.search).get("variant");
+        document.documentElement.dataset.variant = keys.indexOf(v) >= 0 ? v : "a";
+      })();
+    </script>
+  )}
+  {proto && <HeroA />}
+  {proto && <HeroB />}
+  {proto && <HeroC />}
+  <div data-v={proto ? "current" : undefined}>
   <p class="mb-7 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
     <span class="inline-flex items-center gap-2">
       <span class="h-2 w-2 rounded-full bg-[#25d366]" aria-hidden="true"></span>
@@ -35,6 +61,7 @@ const words = profile.headline.split(" ");
     <a href={currently.href} class="underline hover:text-accent">{currently.name}</a>{currently.after}
   </p>
 
+  </div>
   <div id="needs" class="mt-14 js-only" hidden>
     <p class="label mb-3">What do you need built?</p>
     <div class="flex flex-wrap gap-2" role="group" aria-label="What do you need built?">
@@ -64,6 +91,7 @@ const words = profile.headline.split(" ");
     </div>
   </div>
 </section>
+{proto && <PrototypeSwitcher variants={protoVariants} />}
 
 <script>
   const root = document.getElementById("needs");
@@ -108,6 +136,14 @@ const words = profile.headline.split(" ");
         result.hidden = false;
       });
     });
+  }
+
+  const clocks = document.querySelectorAll("[data-clock]");
+  if (clocks.length) {
+    const f = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Kampala" });
+    const t = () => clocks.forEach((c) => (c.textContent = f.format(new Date())));
+    t();
+    setInterval(t, 30000);
   }
 
   const clock = document.getElementById("local-time");
