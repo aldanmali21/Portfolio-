@@ -1,0 +1,38 @@
+---
+import { profile } from "../data/site";
+import WhatsAppIcon from "./WhatsAppIcon.astro";
+---
+
+<!-- Phone-only contact bar: appears once the hero buttons scroll away, and steps
+     aside while the project slider or the contact section is on screen. -->
+<div class="dock" id="dock" aria-hidden="true">
+  <a href={profile.whatsapp} class="btn btn-wa" rel="noopener" tabindex="-1"><WhatsAppIcon />Message me</a>
+  <a href={`mailto:${profile.email}`} class="dock-mail" aria-label="Email me" tabindex="-1">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
+  </a>
+</div>
+
+<script>
+  const dock = document.getElementById("dock");
+  const ctas = document.getElementById("hero-ctas");
+  const work = document.querySelector<HTMLElement>("[data-work]");
+  const contact = document.getElementById("contact");
+  if (dock && ctas) {
+    const state = { past: false, work: false, contact: false };
+    const sync = () => {
+      const show = state.past && !state.contact && !(state.work && work?.classList.contains("is-h"));
+      dock.classList.toggle("is-on", show);
+      dock.setAttribute("aria-hidden", show ? "false" : "true");
+      dock.querySelectorAll("a").forEach((a) => (a.tabIndex = show ? 0 : -1));
+    };
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.target === ctas) state.past = !e.isIntersecting && e.boundingClientRect.top < 0;
+        if (e.target === work) state.work = e.isIntersecting;
+        if (e.target === contact) state.contact = e.isIntersecting;
+      }
+      sync();
+    });
+    [ctas, work, contact].forEach((el) => el && io.observe(el));
+  }
+</script>
