@@ -92,7 +92,7 @@ export const needs: NeedChip[] = [
     id: "operations",
     label: "Run records and operations",
     pitch:
-      "Livestock records, due work and money in one place, plus a farm management system built for a client.",
+      "Livestock records, due work and money in one place, now a live subscription product, plus a farm management system built for a client.",
     targets: ["farmarq", "bmk"],
   },
   {
@@ -123,9 +123,9 @@ export const projects: CaseStudy[] = [
     id: "farmarq",
     kicker: "Livestock records",
     title: "Farmarq",
-    status: null,
+    status: "Live",
     summary:
-      "Livestock record-keeping for farms in Uganda and beyond. Cattle and goats each get a workspace for records, due work and money. Free during the beta.",
+      "Livestock record-keeping for farms in Uganda and beyond. Cattle and goats each get a workspace for records, due work and money. Live as a SaaS with monthly and annual subscriptions.",
     points: [
       "Pick the activities you run, like milk, meat or breeding.",
       "A farm overview shows profit across species, with each cost counted once.",
@@ -148,10 +148,10 @@ export const projects: CaseStudy[] = [
     id: "kampala-dermatology",
     kicker: "Clinic website",
     title: "Kampala Dermatology",
-    status: null,
+    status: "Live",
     client: true,
     summary:
-      "The website for a dermatologist-led clinic in Bugolobi, Kampala, that treats skin, hair and nails.",
+      "The live, fully working website for a dermatologist-led clinic in Bugolobi, Kampala, that treats skin, hair and nails.",
     points: [
       "One main action: book a consultation. The button is in the hero and a booking tab sits on the screen edge.",
       "Services and conditions are laid out for patients, from acne and hair loss to eczema and psoriasis.",
