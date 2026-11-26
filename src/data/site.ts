@@ -125,7 +125,7 @@ export const projects: CaseStudy[] = [
     title: "Farmarq",
     status: null,
     summary:
-      "Livestock record-keeping for farms in Uganda and beyond. Cattle and goats each get a workspace for records, due work and money. Free during the beta.",
+      "Livestock record-keeping for farms in Uganda and beyond. Cattle and goats each get a workspace for records, due work and money. Live as a paid product, with monthly and annual subscriptions.",
     points: [
       "Pick the activities you run, like milk, meat or breeding.",
       "A farm overview shows profit across species, with each cost counted once.",
@@ -151,7 +151,7 @@ export const projects: CaseStudy[] = [
     status: null,
     client: true,
     summary:
-      "The website for a dermatologist-led clinic in Bugolobi, Kampala, that treats skin, hair and nails.",
+      "The website for a dermatologist-led clinic in Bugolobi, Kampala, that treats skin, hair and nails. Live and fully working.",
     points: [
       "One main action: book a consultation. The button is in the hero and a booking tab sits on the screen edge.",
       "Services and conditions are laid out for patients, from acne and hair loss to eczema and psoriasis.",
